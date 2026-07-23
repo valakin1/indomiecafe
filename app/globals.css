@@ -3254,14 +3254,14 @@ button {
   }
 
   .carousel {
-    min-height: 240px;
-    height: 240px;
-    flex-basis: 240px;
+    min-height: 215px;
+    height: 215px;
+    flex-basis: 215px;
     margin-top: 6px;
   }
 
   .carousel-stage {
-    height: 240px;
+    height: 215px;
   }
 
   .meal-image-wrap {
