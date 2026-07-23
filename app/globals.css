@@ -3281,6 +3281,7 @@ button {
   .order-controls {
     grid-template-columns: 1fr;
   }
+
   .quantity-picker,
   .add-order {
     width: 100%;
