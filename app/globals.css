@@ -3272,9 +3272,9 @@ button {
 }
 
 @media (max-width: 520px) {
-  input,
-  textarea,
-  select {
+  .app-shell input,
+  .app-shell textarea,
+  .app-shell select {
     font-size: 16px;
   }
 }
