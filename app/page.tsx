@@ -654,7 +654,842 @@ export default function Dashboard() {
       total: orderTotal,
       startedAt: Date.now(),
       durationSeconds,
-      displa…8374 tokens truncated…checkout-progress" aria-label={`Checkout step ${checkoutStep} of 2`}>
+      displayStartSeconds: meals[orderedMealIndex].minutes * 60 + 36,
+    };
+    setActiveOrders((orders) => [...orders, nextOrder]);
+    setSelectedOrderId(orderId);
+    setTrackingOrigin("confirmation");
+    setOrderClock(Date.now());
+    setCartItems([]);
+    setScreen("tracking");
+    document.querySelector(".app-shell")?.scrollTo({ top: 0 });
+  };
+
+  return (
+    <main className={`app-shell ${screen !== "menu" ? "showing-scrollable" : ""}`}>
+      <header
+        className={`top-header ${
+          screen !== "menu" && screen !== "orders" && screen !== "profile"
+            ? "detail-header"
+            : ""
+        }`}
+      >
+        {screen === "menu" || screen === "orders" || screen === "profile" ? (
+          <img
+            className="brand-logo"
+            src="/indomie-cafe-logo.png"
+            alt="Indomie CafÃ©"
+          />
+        ) : screen === "tracking" ? (
+          <button
+            className="header-circle back-button tracking-close"
+            type="button"
+            aria-label={
+              trackingOrigin === "confirmation"
+                ? "Close order status and return to dashboard"
+                : `Back to ${trackingOrigin}`
+            }
+            onClick={trackingOrigin === "confirmation" ? goToDashboard : exitTracking}
+          >
+            <span aria-hidden="true">
+              {trackingOrigin === "confirmation" ? "Ã—" : "â†"}
+            </span>
+          </button>
+        ) : (
+          <button
+            className="header-circle back-button"
+            type="button"
+            aria-label="Back"
+            onClick={handleBack}
+          >
+            <span aria-hidden="true">â†</span>
+          </button>
+        )}
+
+        {screen !== "menu" && screen !== "orders" && screen !== "profile" && (
+          <h1>
+            {screen === "cart"
+              ? "Your Cart"
+              : screen === "checkout"
+                ? "Checkout"
+                : screen === "tracking"
+                  ? "Order status"
+                  : meal.name}
+          </h1>
+        )}
+
+        {screen === "tracking" ? (
+          <span className="header-spacer" aria-hidden="true" />
+        ) : (
+          <button
+            ref={cartRef}
+            className={`header-circle cart-button ${cartBump ? "is-bumping" : ""} ${screen === "cart" || screen === "checkout" ? "is-current" : ""}`}
+            type="button"
+            aria-label={`Open cart, ${cartCount} items`}
+            onClick={openCart}
+          >
+            <img src="/shopping-cart.svg" alt="" aria-hidden="true" />
+            {cartCount > 0 && <span className="cart-count">{cartCount}</span>}
+          </button>
+        )}
+      </header>
+
+      {screen === "menu" ? (
+        <>
+          <section
+            className={`dashboard-content ${activeOrders.length > 0 ? "has-active-order" : ""}`}
+          >
+            <div className="welcome">
+              <p className="greeting">Good Morning</p>
+              <h1>
+                Juwon <span aria-hidden="true">{"\u{1F44B}"}</span>
+              </h1>
+              <p className="prompt">What would you like to have today?</p>
+            </div>
+
+            <div
+              className="carousel"
+              role="region"
+              aria-roledescription="carousel"
+              aria-label="Noodle menu"
+              tabIndex={0}
+              onKeyDown={(event) => {
+                if (event.key === "ArrowRight") move(1);
+                if (event.key === "ArrowLeft") move(-1);
+              }}
+              onPointerDown={(event) => {
+                dragStart.current = event.clientX;
+                event.currentTarget.setPointerCapture(event.pointerId);
+              }}
+              onPointerUp={(event) => {
+                if (dragStart.current === null) return;
+                const distance = event.clientX - dragStart.current;
+                if (Math.abs(distance) > 42) move(distance < 0 ? 1 : -1);
+                dragStart.current = null;
+              }}
+              onPointerCancel={() => {
+      
+          dragStart.current = null;
+              }}
+            >
+              <div className="carousel-stage">
+                {meals.map((item, index) => {
+                  const position = relativePosition(index, active);
+                  const distance = Math.abs(position);
+                  return (
+                    <article
+                      className={`meal-card ${position === 0 ? "is-active" : ""}`}
+                      key={item.name}
+                      style={
+                        {
+                          "--position": position,
+                          "--card-scale": position === 0 ? 1 : distance === 1 ? 0.7 : 0.45,
+                          "--card-opacity": position === 0 ? 1 : distance === 1 ? 0.44 : 0,
+                          "--card-blur": position === 0 ? "0px" : "0.3px",
+                        } as React.CSSProperties
+                      }
+                      aria-hidden={position !== 0}
+                    >
+                      <div className="meal-image-wrap">
+                        <span className="meal-glow" />
+                        <img
+                          className="meal-image"
+                          src={item.image}
+                          alt={position === 0 ? `${item.name} noodle box` : ""}
+                          draggable={false}
+                        />
+                      </div>
+                      <p className="meal-eyebrow">{item.eyebrow}</p>
+                      <h2>{item.name}</h2>
+                    </article>
+                  );
+                })}
+              </div>
+
+            </div>
+
+            <div className="carousel-controls">
+              <div className="carousel-dots" aria-label="Choose a noodle box">
+                {meals.map((item, index) => (
+                  <button
+                    key={item.name}
+                    type="button"
+                    className={index === active ? "dot is-active" : "dot"}
+                    aria-label={`Show ${item.name}`}
+                    aria-current={index === active ? "true" : undefined}
+                    onClick={() => setActive(index)}
+                  />
+                ))}
+              </div>
+
+              <button className="view-box" type="button" onClick={openDetails}>
+                <span>View Box</span>
+                <span className="arrow" aria-hidden="true">
+                  â†’
+                </span>
+              </button>
+            </div>
+
+            {activeOrders.length > 0 && (
+              <div className="active-order-stack" aria-label="Active orders">
+                {activeOrders.map((order) => {
+                  const status = getOrderStatus(order, orderClock);
+                  const isSelected = selectedOrder?.id === order.id;
+                  return (
+                    <button
+                      key={order.id}
+                      className={isSelected ? "is-selected" : ""}
+                      type="button"
+                      aria-label={`${meals[order.mealIndex].name}, ${orderStages[status.stage].name}`}
+                      onClick={() => chooseTrackedOrder(order.id, "menu")}
+                    >
+                      <img src={meals[order.mealIndex].image} alt="" aria-hidden="true" />
+                      <span>
+                        <small>{order.id}</small>
+                        <strong>{orderStages[status.stage].name}</strong>
+                      </span>
+                      {isSelected && (
+                        <b>
+                          {status.stage === 3
+                            ? "View"
+                            : formatCountdown(status.displaySeconds)}
+                        </b>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </section>
+
+          <nav className="bottom-nav" aria-label="Primary navigation">
+            <button className="nav-item is-active" type="button" aria-current="page">
+              <img src="/bowl-food.svg" alt="" aria-hidden="true" />
+              <span>Menu</span>
+            </button>
+            <button className="nav-item" type="button" onClick={() => setScreen("orders")}>
+              <img src="/shopping-cart.svg" alt="" aria-hidden="true" />
+              <span>Orders</span>
+              {activeOrders.length > 0 && (
+                <b className="nav-order-count">{activeOrders.length}</b>
+              )}
+            </button>
+            <button className="nav-item" type="button" onClick={() => setScreen("profile")}>
+              <img
+                className="profile-avatar"
+                src={avatarSrc}
+                alt=""
+                aria-hidden="true"
+              />
+              <span>Profile</span>
+            </button>
+          </nav>
+        </>
+      ) : screen === "orders" ? (
+        <>
+          <section className="orders-content" aria-labelledby="orders-heading">
+            <div className="orders-heading">
+              <p>Indomie CafÃ©</p>
+              <h2 id="orders-heading">Your orders</h2>
+              <span>Track every box from the kitchen to your door.</span>
+            </div>
+
+            {activeOrders.length > 0 || orderHistory.length > 0 ? (
+              <div className="orders-groups">
+                {activeOrders.length > 0 && (
+                  <section className="orders-group" aria-labelledby="active-orders-heading">
+                    <div className="orders-group-heading">
+                      <h3 id="active-orders-heading">In progress</h3>
+                      <span>{activeOrders.length} active</span>
+                    </div>
+                    <div className="orders-list">
+                {activeOrders.map((order, index) => {
+                  const status = getOrderStatus(order, orderClock);
+                  const itemCount = order.items.reduce(
+                    (total, item) => total + item.quantity,
+                    0,
+                  );
+                  return (
+                    <button
+                      className="order-history-card"
+                      type="button"
+                      key={order.id}
+                      onClick={() => openOrderDetails(order.id)}
+                    >
+                      <span className="order-sequence">
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
+                      <img
+                        src={meals[order.mealIndex].image}
+                        alt=""
+                        aria-hidden="true"
+                      />
+                      <span className="order-history-copy">
+                        <small>{order.id}</small>
+                        <strong>{meals[order.mealIndex].name}</strong>
+                        <em>
+                          {itemCount} {itemCount === 1 ? "box" : "boxes"} Â·{" "}
+                          {formatNaira(order.total)}
+                        </em>
+                      </span>
+                      <span className="order-history-status">
+                        <i aria-hidden="true" />
+                        <strong>{orderStages[status.stage].name}</strong>
+                        <small>
+                          {status.stage === 3
+                            ? "Complete"
+                            : formatCountdown(status.displaySeconds)}
+                        </small>
+                      </span>
+                    </button>
+                  );
+                      })}
+                    </div>
+                  </section>
+                )}
+
+                {orderHistory.length > 0 && (
+                  <section className="orders-group" aria-labelledby="order-history-heading">
+                    <div className="orders-group-heading">
+                      <h3 id="order-history-heading">Order history</h3>
+                      <span>{orderHistory.length} completed</span>
+                    </div>
+                    <div className="orders-list">
+                      {orderHistory.map((order, index) => {
+                        const itemCount = order.items.reduce(
+                          (total, item) => total + item.quantity,
+                          0,
+                        );
+                        return (
+                          <button
+                            className="order-history-card is-complete"
+                            type="button"
+                            key={order.id}
+                            onClick={() => openOrderDetails(order.id)}
+                          >
+                            <span className="order-sequence">
+                              {String(orderHistory.length - index).padStart(2, "0")}
+                            </span>
+                            <img
+                              src={meals[order.mealIndex].image}
+                              alt=""
+                              aria-hidden="true"
+                            />
+                            <span className="order-history-copy">
+                              <small>{order.id}</small>
+                              <strong>{meals[order.mealIndex].name}</strong>
+                              <em>
+                                {itemCount} {itemCount === 1 ? "box" : "boxes"} Â·{" "}
+                                {formatNaira(order.total)}
+                              </em>
+                            </span>
+                            <span className="order-history-status">
+                              <i aria-hidden="true" />
+                              <strong>Delivered</strong>
+                              <small>{formatOrderDate(order.completedAt)}</small>
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </section>
+                )}
+              </div>
+            ) : (
+              <div className="orders-empty">
+                <img src="/bowl-food.svg" alt="" aria-hidden="true" />
+                <h3>No orders yet</h3>
+                <p>Your active and completed cafÃ© orders will appear here.</p>
+                <button type="button" onClick={() => setScreen("menu")}>
+                  Explore the menu
+                </button>
+              </div>
+            )}
+          </section>
+
+          <nav className="bottom-nav" aria-label="Primary navigation">
+            <button className="nav-item" type="button" onClick={() => setScreen("menu")}>
+              <img src="/bowl-food.svg" alt="" aria-hidden="true" />
+              <span>Menu</span>
+            </button>
+            <button className="nav-item is-active" type="button" aria-current="page">
+              <img src="/shopping-cart.svg" alt="" aria-hidden="true" />
+              <span>Orders</span>
+              {activeOrders.length > 0 && (
+                <b className="nav-order-count">{activeOrders.length}</b>
+              )}
+            </button>
+            <button className="nav-item" type="button" onClick={() => setScreen("profile")}>
+              <img
+                className="profile-avatar"
+                src={avatarSrc}
+                alt=""
+                aria-hidden="true"
+              />
+              <span>Profile</span>
+            </button>
+          </nav>
+        </>
+      ) : screen === "profile" ? (
+        <>
+          <section className="profile-content" aria-labelledby="profile-heading">
+            <div className="profile-heading">
+              <p>My cafÃ©</p>
+              <h2 id="profile-heading">Profile</h2>
+              <span>Keep your details ready for a faster checkout.</span>
+            </div>
+
+            <section className="profile-identity" aria-label="Profile identity">
+              <button
+                className="profile-photo-button"
+                type="button"
+                aria-label="Change profile picture"
+                onClick={() => avatarInputRef.current?.click()}
+              >
+                <img src={avatarSrc} alt={`${profileName}'s profile`} />
+                <span aria-hidden="true">+</span>
+              </button>
+              <input
+                ref={avatarInputRef}
+                className="sr-only"
+                type="file"
+                accept="image/*"
+                onChange={(event) => changeAvatar(event.target.files?.[0])}
+              />
+              <div>
+                {profileEditing ? (
+                  <input
+                    className="profile-name-input"
+                    value={profileName}
+                    aria-label="Profile name"
+                    onChange={(event) => setProfileName(event.target.value)}
+                  />
+                ) : (
+                  <>
+                    <h3>{profileName}</h3>
+                    <p>Indomie CafÃ© member</p>
+                  </>
+                )}
+              </div>
+              <button
+                className="profile-edit-button"
+                type="button"
+                onClick={profileEditing ? saveProfile : () => setProfileEditing(true)}
+              >
+                {profileEditing ? "Save" : "Edit"}
+              </button>
+            </section>
+
+            <section className="profile-section" aria-labelledby="saved-address-heading">
+              <div className="profile-section-heading">
+                <div>
+                  <p>Delivery</p>
+                  <h3 id="saved-address-heading">Saved address</h3>
+                </div>
+                {savedDelivery && addressPreview && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setDelivery(savedDelivery);
+                      setAddressPreview(false);
+                    }}
+                  >
+                    Edit
+                  </button>
+                )}
+              </div>
+
+              {savedDelivery && addressPreview ? (
+                <div className="profile-address-preview">
+                  <span aria-hidden="true">âŒ‚</span>
+                  <div>
+                    <strong>{savedDelivery.name}</strong>
+                    <p>{savedDelivery.address}</p>
+                    <small>
+                      {savedDelivery.city} Â· {savedDelivery.phone}
+                    </small>
+                  </div>
+                  <i aria-hidden="true">âœ“</i>
+                </div>
+              ) : (
+                <div className="profile-address-form">
+                  <label>
+                    <span>Full name</span>
+                    <input
+                      value={delivery.name}
+                      onChange={(event) =>
+                        setDelivery((value) => ({ ...value, name: event.target.value }))
+                      }
+                    />
+                  </label>
+                  <label>
+                    <span>Phone number</span>
+                    <input
+                      type="tel"
+                      value={delivery.phone}
+                      placeholder="+234"
+                      onChange={(event) =>
+                        setDelivery((value) => ({ ...value, phone: event.target.value }))
+                      }
+                    />
+                  </label>
+                  <label className="full-width">
+                    <span>Delivery address</span>
+                    <textarea
+                      rows={3}
+                      value={delivery.address}
+                      placeholder="Street, house number, and landmark"
+                      onChange={(event) =>
+                        setDelivery((value) => ({ ...value, address: event.target.value }))
+                      }
+                    />
+                  </label>
+                  <label>
+                    <span>City</span>
+                    <input
+                      value={delivery.city}
+                      onChange={(event) =>
+                        setDelivery((value) => ({ ...value, city: event.target.value }))
+                      }
+                    />
+                  </label>
+                  <label>
+                    <span>Delivery note</span>
+                    <input
+                      value={delivery.notes}
+                      placeholder="Optional"
+                      onChange={(event) =>
+                        setDelivery((value) => ({ ...value, notes: event.target.value }))
+                      }
+                    />
+                  </label>
+                  {addressError && (
+                    <p className="address-error full-width">{addressError}</p>
+                  )}
+                  <button
+                    className="profile-save-address"
+                    type="button"
+                    onClick={saveDeliveryAddress}
+                  >
+                    Save delivery address
+                  </button>
+                </div>
+              )}
+            </section>
+
+            <section className="profile-section" aria-labelledby="notifications-heading">
+              <div className="profile-section-heading">
+                <div>
+                  <p>Preferences</p>
+                  <h3 id="notifications-heading">Notifications</h3>
+                </div>
+              </div>
+              <div className="notification-list">
+                {[
+                  ["orderUpdates", "Order updates", "Kitchen, rider, and delivery alerts"],
+                  ["offers", "Offers & rewards", "Promos and Spin to Win reminders"],
+                  ["reminders", "Meal reminders", "A gentle nudge around your usual time"],
+                ].map(([key, title, note]) => (
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={() =>
+                      updateNotification(key as keyof typeof notifications)
+                    }
+                  >
+                    <span>
+                      <strong>{title}</strong>
+                      <small>{note}</small>
+                    </span>
+                    <i
+                      className={
+                        notifications[key as keyof typeof notifications]
+                          ? "is-on"
+                          : ""
+                      }
+                      aria-label={
+                        notifications[key as keyof typeof notifications] ? "On" : "Off"
+                      }
+                    />
+                  </button>
+                ))}
+              </div>
+            </section>
+          </section>
+
+          <nav className="bottom-nav" aria-label="Primary navigation">
+            <button className="nav-item" type="button" onClick={() => setScreen("menu")}>
+              <img src="/bowl-food.svg" alt="" aria-hidden="true" />
+              <span>Menu</span>
+            </button>
+            <button className="nav-item" type="button" onClick={() => setScreen("orders")}>
+              <img src="/shopping-cart.svg" alt="" aria-hidden="true" />
+              <span>Orders</span>
+              {activeOrders.length > 0 && (
+                <b className="nav-order-count">{activeOrders.length}</b>
+              )}
+            </button>
+            <button className="nav-item is-active" type="button" aria-current="page">
+              <img
+                className="profile-avatar"
+                src={avatarSrc}
+                alt=""
+                aria-hidden="true"
+              />
+              <span>Profile</span>
+            </button>
+          </nav>
+        </>
+      ) : screen === "details" ? (
+        <section className="details-content" aria-labelledby="meal-detail-heading">
+          <h2 id="meal-detail-heading" className="sr-only">
+            {meal.name} details
+          </h2>
+
+          <div className="detail-hero">
+            <span className="detail-shadow" />
+            <img
+              ref={detailProductRef}
+              className="detail-product"
+              src={meal.image}
+              alt={`${meal.name} noodle box`}
+            />
+          </div>
+
+          <div className="meal-information">
+            <div className="meal-description-row">
+              <p className="meal-description">{meal.description}</p>
+              <strong className="detail-price">{formatNaira(meal.price)}</strong>
+            </div>
+            <div className="meal-facts">
+              <span>
+                <img src="/clock.svg" alt="" aria-hidden="true" />
+                {meal.minutes} min
+              </span>
+              <span>
+                <img src="/lightning.svg" alt="" aria-hidden="true" />
+                {meal.calories} kcal
+              </span>
+            </div>
+          </div>
+
+          <div className="order-controls">
+            <div className="quantity-picker" aria-label="Quantity selector">
+              <button
+                type="button"
+                aria-label="Increase quantity"
+                onClick={() => setQuantity((value) => Math.min(20, value + 1))}
+              >
+                +
+              </button>
+              <output aria-live="polite">{String(quantity).padStart(2, "0")}</output>
+              <button
+                type="button"
+                aria-label="Decrease quantity"
+                disabled={quantity === 1}
+                onClick={() => setQuantity((value) => Math.max(1, value - 1))}
+              >
+                âˆ’
+              </button>
+            </div>
+            <button
+              className="add-order"
+              type="button"
+              disabled={Boolean(flight)}
+              onClick={addToOrder}
+            >
+              {flight ? "Adding..." : "Add to order"}
+            </button>
+          </div>
+
+          <section className="spice-card" aria-labelledby="spice-heading">
+            <div className="spice-card-heading">
+              <h2 id="spice-heading">Spice Level</h2>
+              <span aria-live="polite">
+                {selectedSpice.name} Â· {Math.round(spice)}%
+              </span>
+            </div>
+
+            <div className="spice-range-wrap">
+              <input
+                className="spice-range"
+                type="range"
+                min="0"
+                max="100"
+                step="0.1"
+                value={spice}
+                aria-label="Spice level"
+                aria-valuetext={`${selectedSpice.name}, ${Math.round(spice)} percent`}
+                onChange={(event) => setSpice(Number(event.target.value))}
+              />
+              <div className="range-names" aria-hidden="true">
+                {spiceLevels.map((level) => (
+                  <span key={level.name}>{level.name}</span>
+                ))}
+              </div>
+            </div>
+
+            <div className="spice-levels">
+              {spiceLevels.map((level, index) => (
+                <button
+                  key={level.name}
+                  className={spiceIndex === index ? "is-selected" : ""}
+                  type="button"
+                  style={{ "--level-color": level.color } as React.CSSProperties}
+                  aria-pressed={spiceIndex === index}
+                  onClick={() => setSpice(index * (100 / (spiceLevels.length - 1)))}
+                >
+                  <span className="flame-badge">
+                    <i aria-hidden="true" />
+                  </span>
+                  <strong>{level.name}</strong>
+                  <small>{level.note}</small>
+                </button>
+              ))}
+            </div>
+          </section>
+        </section>
+      ) : screen === "cart" ? (
+        <section className="cart-content" aria-labelledby="cart-heading">
+          <div className="cart-heading">
+            <p>Order summary</p>
+            <h2 id="cart-heading">
+              {cartItems.length === 0
+                ? "Your cart is waiting"
+                : `${cartCount} ${cartCount === 1 ? "box" : "boxes"} selected`}
+            </h2>
+          </div>
+
+          {activeOrders.length > 0 && (
+            <div className="cart-order-switcher" aria-label="Ord
+ers in progress">
+              {activeOrders.map((order) => {
+                const status = getOrderStatus(order, orderClock);
+                return (
+                  <button
+                    key={order.id}
+                    className={selectedOrder?.id === order.id ? "is-selected" : ""}
+                    type="button"
+                    onClick={() => chooseTrackedOrder(order.id, "cart")}
+                  >
+                    <img src={meals[order.mealIndex].image} alt="" aria-hidden="true" />
+                    <span>
+                      <small>{order.id}</small>
+                      <strong>{meals[order.mealIndex].name}</strong>
+                      <em>{orderStages[status.stage].name}</em>
+                    </span>
+                    {selectedOrder?.id === order.id && (
+                      <b>
+                        {status.stage === 3
+                          ? "View"
+                          : formatCountdown(status.displaySeconds)}
+                      </b>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
+          {cartItems.length === 0 ? (
+            <div className="empty-cart">
+              <div className="empty-cart-icon">
+                <img src="/shopping-cart.svg" alt="" aria-hidden="true" />
+              </div>
+              <h3>Nothing here yet</h3>
+              <p>Swipe through the cafÃ© menu and add a box when something catches your eye.</p>
+              <button type="button" onClick={() => setScreen("menu")}>
+                Explore the menu
+              </button>
+            </div>
+          ) : (
+            <>
+              <div className="cart-list">
+                {cartItems.map((item) => {
+                  const cartMeal = meals[item.mealIndex];
+                  const cartSpice = spiceLevels[item.spiceIndex];
+                  return (
+                    <article className="cart-item" key={item.id}>
+                      <button
+                        className="remove-item"
+                        type="button"
+                        aria-label={`Remove ${cartMeal.name}`}
+                        onClick={() => removeCartItem(item.id)}
+                      >
+                        Ã—
+                      </button>
+
+                      <div className="cart-item-image">
+                        <span />
+                        <img src={cartMeal.image} alt={`${cartMeal.name} noodle box`} />
+                      </div>
+
+                      <div className="cart-item-copy">
+                        <p>{cartMeal.eyebrow}</p>
+                        <h3>{cartMeal.name}</h3>
+                        <div className="cart-item-meta">
+                          <span
+                            className="spice-dot"
+                            style={{ background: cartSpice.color }}
+                            aria-hidden="true"
+                          />
+                          {cartSpice.name}
+                          <i aria-hidden="true" />
+                          {cartMeal.minutes} min
+                        </div>
+                      </div>
+
+                      <div className="cart-item-footer">
+                        <div className="cart-line-price">
+                          <small>{formatNaira(cartMeal.price)} each</small>
+                          <strong>{formatNaira(cartMeal.price * item.quantity)}</strong>
+                        </div>
+                        <div className="cart-quantity" aria-label={`${cartMeal.name} quantity`}>
+                          <button
+                            type="button"
+                            aria-label={`Decrease ${cartMeal.name} quantity`}
+                            disabled={item.quantity === 1}
+                            onClick={() => changeCartQuantity(item.id, -1)}
+                          >
+                            âˆ’
+                          </button>
+                          <output>{String(item.quantity).padStart(2, "0")}</output>
+                          <button
+                            type="button"
+                            aria-label={`Increase ${cartMeal.name} quantity`}
+                            onClick={() => changeCartQuantity(item.id, 1)}
+                          >
+                            +
+                          </button>
+                        </div>
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
+
+              <section className="checkout-card" aria-label="Order total">
+                <div>
+                  <span>Subtotal Â· {cartCount} {cartCount === 1 ? "box" : "boxes"}</span>
+                  <strong>{formatNaira(subtotal)}</strong>
+                </div>
+                <div>
+                  <span>Estimated kitchen time</span>
+                  <strong>
+                    {estimatedMinutes}â€“{estimatedMinutes + 5} min
+                  </strong>
+                </div>
+                <button type="button" onClick={openCheckout}>
+                  <span>Continue to checkout</span>
+                  <span aria-hidden="true">â†’</span>
+                </button>
+              </section>
+            </>
+          )}
+        </section>
+      ) : screen === "checkout" ? (
+        <section className="checkout-content" aria-labelledby="checkout-heading">
+          <div className="checkout-progress" aria-label={`Checkout step ${checkoutStep} of 2`}>
             <div className="is-complete">
               <span>{checkoutStep > 1 ? "âœ“" : "1"}</span>
               <strong>Review</strong>
@@ -1124,7 +1959,8 @@ export default function Dashboard() {
                 <div>
                   <small>{wheelResult.id === "nothing" ? "So close!" : "You won"}</small>
                   <h3>{wheelResult.label}</h3>
-                </div>
+                <
+/div>
                 <button type="button" onClick={applyWheelReward}>
                   {wheelResult.discount || wheelResult.freeDelivery
                     ? "Apply reward"
