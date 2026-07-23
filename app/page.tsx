@@ -768,8 +768,7 @@ export default function Dashboard() {
                 dragStart.current = null;
               }}
               onPointerCancel={() => {
-      
-          dragStart.current = null;
+                dragStart.current = null;
               }}
             >
               <div className="carousel-stage">
@@ -1361,8 +1360,7 @@ export default function Dashboard() {
           </div>
 
           {activeOrders.length > 0 && (
-            <div className="cart-order-switcher" aria-label="Ord
-ers in progress">
+            <div className="cart-order-switcher" aria-label="Orders in progress">
               {activeOrders.map((order) => {
                 const status = getOrderStatus(order, orderClock);
                 return (
@@ -1959,8 +1957,7 @@ ers in progress">
                 <div>
                   <small>{wheelResult.id === "nothing" ? "So close!" : "You won"}</small>
                   <h3>{wheelResult.label}</h3>
-                <
-/div>
+                </div>
                 <button type="button" onClick={applyWheelReward}>
                   {wheelResult.discount || wheelResult.freeDelivery
                     ? "Apply reward"
@@ -2005,4 +2002,3 @@ ers in progress">
     </main>
   );
 }
-
