@@ -53,6 +53,7 @@ button {
   width: min(100%, 520px);
   min-height: 100vh;
   min-height: 100svh;
+  min-height: 100dvh;
   margin: 0 auto;
   overflow: hidden;
   background:
@@ -65,6 +66,7 @@ button {
 .app-shell.showing-scrollable {
   height: 100vh;
   height: 100svh;
+  height: 100dvh;
   overflow-y: auto;
   overscroll-behavior: contain;
 }
@@ -192,6 +194,7 @@ button {
   display: flex;
   min-height: 100vh;
   min-height: 100svh;
+  min-height: 100dvh;
   padding: calc(116px + env(safe-area-inset-top)) clamp(20px, 6vw, 30px) calc(114px + env(safe-area-inset-bottom));
   flex-direction: column;
   align-items: stretch;
@@ -239,10 +242,10 @@ button {
 .carousel {
   position: relative;
   display: flex;
-  min-height: 290px;
-  height: 290px;
+  min-height: 260px;
+  height: 260px;
   margin: 10px calc(clamp(20px, 6vw, 30px) * -1) 0;
-  flex: 0 0 290px;
+  flex: 0 0 260px;
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -266,8 +269,8 @@ button {
 .carousel-stage {
   position: relative;
   width: 100%;
-  height: 290px;
-  transform: translateY(16px);
+  height: 260px;
+  transform: translateY(8px);
 }
 
 .meal-card {
@@ -289,8 +292,8 @@ button {
 .meal-image-wrap {
   position: relative;
   display: grid;
-  width: clamp(168px, 47vw, 212px);
-  height: clamp(188px, 50vw, 226px);
+  width: clamp(143px, 40vw, 180px);
+  height: clamp(160px, 42.5vw, 192px);
   place-items: center;
 }
 
@@ -353,11 +356,11 @@ button {
 
 .carousel-controls {
   display: flex;
-  margin-top: 24px;
+  margin-top: 14px;
   align-items: center;
   flex-direction: column;
   gap: 12px;
-  transform: translateY(16px);
+  transform: translateY(4px);
 }
 
 .dot {
@@ -428,7 +431,7 @@ button {
 
 .active-order-stack {
   position: fixed;
-  bottom: calc(104px + env(safe-area-inset-bottom));
+  bottom: calc(92px + env(safe-area-inset-bottom));
   left: 50%;
   z-index: 19;
   display: flex;
@@ -562,6 +565,7 @@ button {
 .details-content {
   min-height: 100vh;
   min-height: 100svh;
+  min-height: 100dvh;
   padding: calc(116px + env(safe-area-inset-top)) clamp(20px, 6vw, 30px) calc(28px + env(safe-area-inset-bottom));
 }
 
@@ -849,12 +853,14 @@ button {
 .cart-content {
   min-height: 100vh;
   min-height: 100svh;
+  min-height: 100dvh;
   padding: calc(126px + env(safe-area-inset-top)) clamp(20px, 6vw, 30px) calc(30px + env(safe-area-inset-bottom));
 }
 
 .orders-content {
   min-height: 100vh;
   min-height: 100svh;
+  min-height: 100dvh;
   padding: calc(116px + env(safe-area-inset-top)) clamp(20px, 6vw, 30px)
     calc(112px + env(safe-area-inset-bottom));
 }
@@ -1027,6 +1033,7 @@ button {
 .profile-content {
   min-height: 100vh;
   min-height: 100svh;
+  min-height: 100dvh;
   padding: calc(116px + env(safe-area-inset-top)) clamp(20px, 6vw, 30px)
     calc(112px + env(safe-area-inset-bottom));
 }
@@ -1798,6 +1805,7 @@ button {
 .checkout-content {
   min-height: 100vh;
   min-height: 100svh;
+  min-height: 100dvh;
   padding: calc(126px + env(safe-area-inset-top)) clamp(20px, 6vw, 30px) calc(108px + env(safe-area-inset-bottom));
 }
 
@@ -2415,6 +2423,7 @@ button {
 .tracking-content {
   min-height: 100vh;
   min-height: 100svh;
+  min-height: 100dvh;
   padding: calc(122px + env(safe-area-inset-top)) clamp(20px, 6vw, 30px)
     calc(108px + env(safe-area-inset-bottom));
 }
@@ -2893,6 +2902,7 @@ button {
   position: relative;
   width: min(100%, 390px);
   max-height: calc(100svh - 40px);
+  max-height: calc(100dvh - 40px);
   padding: 22px 20px 18px;
   overflow-y: auto;
   border: 1px solid rgba(255, 255, 255, 0.92);
@@ -3244,19 +3254,19 @@ button {
   }
 
   .carousel {
-    min-height: 270px;
-    height: 270px;
-    flex-basis: 270px;
+    min-height: 240px;
+    height: 240px;
+    flex-basis: 240px;
     margin-top: 6px;
   }
 
   .carousel-stage {
-    height: 270px;
+    height: 240px;
   }
 
   .meal-image-wrap {
-    width: min(43vw, 184px);
-    height: min(46vw, 196px);
+    width: min(36.5vw, 156px);
+    height: min(39vw, 167px);
   }
 
   .view-box {
@@ -3267,6 +3277,10 @@ button {
   .bottom-nav {
     bottom: calc(10px + env(safe-area-inset-bottom));
     height: 62px;
+  }
+
+  .active-order-stack {
+    bottom: calc(78px + env(safe-area-inset-bottom));
   }
 
 }
