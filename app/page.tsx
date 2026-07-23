@@ -82,9 +82,9 @@ const meals: Meal[] = [
   {
     name: "Indogizdo",
     image: "/indogizdo.png",
-    eyebrow: "CafÃ© signature",
+    eyebrow: "Café signature",
     description:
-      "A rich, savoury mix of Indomie, gizzard, plantain, peppers, and signature cafÃ© seasoning.",
+      "A rich, savoury mix of Indomie, gizzard, plantain, peppers, and signature café seasoning.",
     minutes: 15,
     calories: 610,
     price: 4600,
@@ -94,7 +94,7 @@ const meals: Meal[] = [
     image: "/sausage-indomie.png",
     eyebrow: "Classic comfort",
     description:
-      "The cafÃ© classic loaded with savoury sausage bites, vegetables, and aromatic spices.",
+      "The café classic loaded with savoury sausage bites, vegetables, and aromatic spices.",
     minutes: 11,
     calories: 560,
     price: 3900,
@@ -147,9 +147,9 @@ const wheelRewards: WheelReward[] = [
 
 const orderStages = [
   { name: "Preparing", note: "Your noodles are being tossed fresh" },
-  { name: "Dispatched", note: "Your order has left the cafÃ©" },
+  { name: "Dispatched", note: "Your order has left the café" },
   { name: "On the way", note: "Your rider is heading to you" },
-  { name: "Delivered", note: "Your Indomie CafÃ© box has arrived" },
+  { name: "Delivered", note: "Your Indomie Café box has arrived" },
 ];
 
 function relativePosition(index: number, active: number) {
@@ -160,7 +160,7 @@ function relativePosition(index: number, active: number) {
 }
 
 function formatNaira(value: number) {
-  return `â‚¦${value.toLocaleString("en-NG")}`;
+  return `₦${value.toLocaleString("en-NG")}`;
 }
 
 function formatCountdown(value: number) {
@@ -515,8 +515,8 @@ export default function Dashboard() {
       setPromoStatus("applied");
       showNotice(
         replacedWheelReward
-          ? "Promo applied â€” it replaced your wheel reward."
-          : "Promo applied â€” you saved 20%.",
+          ? "Promo applied — it replaced your wheel reward."
+          : "Promo applied — you saved 20%.",
       );
     } else {
       setPromoStatus("error");
@@ -678,7 +678,7 @@ export default function Dashboard() {
           <img
             className="brand-logo"
             src="/indomie-cafe-logo.png"
-            alt="Indomie CafÃ©"
+            alt="Indomie Café"
           />
         ) : screen === "tracking" ? (
           <button
@@ -692,7 +692,7 @@ export default function Dashboard() {
             onClick={trackingOrigin === "confirmation" ? goToDashboard : exitTracking}
           >
             <span aria-hidden="true">
-              {trackingOrigin === "confirmation" ? "Ã—" : "â†"}
+              {trackingOrigin === "confirmation" ? "×" : "←"}
             </span>
           </button>
         ) : (
@@ -702,7 +702,7 @@ export default function Dashboard() {
             aria-label="Back"
             onClick={handleBack}
           >
-            <span aria-hidden="true">â†</span>
+            <span aria-hidden="true">←</span>
           </button>
         )}
 
@@ -824,7 +824,7 @@ export default function Dashboard() {
               <button className="view-box" type="button" onClick={openDetails}>
                 <span>View Box</span>
                 <span className="arrow" aria-hidden="true">
-                  â†’
+                  →
                 </span>
               </button>
             </div>
@@ -888,7 +888,7 @@ export default function Dashboard() {
         <>
           <section className="orders-content" aria-labelledby="orders-heading">
             <div className="orders-heading">
-              <p>Indomie CafÃ©</p>
+              <p>Indomie Café</p>
               <h2 id="orders-heading">Your orders</h2>
               <span>Track every box from the kitchen to your door.</span>
             </div>
@@ -927,7 +927,7 @@ export default function Dashboard() {
                         <small>{order.id}</small>
                         <strong>{meals[order.mealIndex].name}</strong>
                         <em>
-                          {itemCount} {itemCount === 1 ? "box" : "boxes"} Â·{" "}
+                          {itemCount} {itemCount === 1 ? "box" : "boxes"} ·{" "}
                           {formatNaira(order.total)}
                         </em>
                       </span>
@@ -978,7 +978,7 @@ export default function Dashboard() {
                               <small>{order.id}</small>
                               <strong>{meals[order.mealIndex].name}</strong>
                               <em>
-                                {itemCount} {itemCount === 1 ? "box" : "boxes"} Â·{" "}
+                                {itemCount} {itemCount === 1 ? "box" : "boxes"} ·{" "}
                                 {formatNaira(order.total)}
                               </em>
                             </span>
@@ -998,7 +998,7 @@ export default function Dashboard() {
               <div className="orders-empty">
                 <img src="/bowl-food.svg" alt="" aria-hidden="true" />
                 <h3>No orders yet</h3>
-                <p>Your active and completed cafÃ© orders will appear here.</p>
+                <p>Your active and completed café orders will appear here.</p>
                 <button type="button" onClick={() => setScreen("menu")}>
                   Explore the menu
                 </button>
@@ -1033,7 +1033,7 @@ export default function Dashboard() {
         <>
           <section className="profile-content" aria-labelledby="profile-heading">
             <div className="profile-heading">
-              <p>My cafÃ©</p>
+              <p>My café</p>
               <h2 id="profile-heading">Profile</h2>
               <span>Keep your details ready for a faster checkout.</span>
             </div>
@@ -1066,7 +1066,7 @@ export default function Dashboard() {
                 ) : (
                   <>
                     <h3>{profileName}</h3>
-                    <p>Indomie CafÃ© member</p>
+                    <p>Indomie Café member</p>
                   </>
                 )}
               </div>
@@ -1100,15 +1100,15 @@ export default function Dashboard() {
 
               {savedDelivery && addressPreview ? (
                 <div className="profile-address-preview">
-                  <span aria-hidden="true">âŒ‚</span>
+                  <span aria-hidden="true">⌂</span>
                   <div>
                     <strong>{savedDelivery.name}</strong>
                     <p>{savedDelivery.address}</p>
                     <small>
-                      {savedDelivery.city} Â· {savedDelivery.phone}
+                      {savedDelivery.city} · {savedDelivery.phone}
                     </small>
                   </div>
-                  <i aria-hidden="true">âœ“</i>
+                  <i aria-hidden="true">✓</i>
                 </div>
               ) : (
                 <div className="profile-address-form">
@@ -1288,7 +1288,7 @@ export default function Dashboard() {
                 disabled={quantity === 1}
                 onClick={() => setQuantity((value) => Math.max(1, value - 1))}
               >
-                âˆ’
+                −
               </button>
             </div>
             <button
@@ -1305,7 +1305,7 @@ export default function Dashboard() {
             <div className="spice-card-heading">
               <h2 id="spice-heading">Spice Level</h2>
               <span aria-live="polite">
-                {selectedSpice.name} Â· {Math.round(spice)}%
+                {selectedSpice.name} · {Math.round(spice)}%
               </span>
             </div>
 
@@ -1395,7 +1395,7 @@ export default function Dashboard() {
                 <img src="/shopping-cart.svg" alt="" aria-hidden="true" />
               </div>
               <h3>Nothing here yet</h3>
-              <p>Swipe through the cafÃ© menu and add a box when something catches your eye.</p>
+              <p>Swipe through the café menu and add a box when something catches your eye.</p>
               <button type="button" onClick={() => setScreen("menu")}>
                 Explore the menu
               </button>
@@ -1414,7 +1414,7 @@ export default function Dashboard() {
                         aria-label={`Remove ${cartMeal.name}`}
                         onClick={() => removeCartItem(item.id)}
                       >
-                        Ã—
+                        ×
                       </button>
 
                       <div className="cart-item-image">
@@ -1449,7 +1449,7 @@ export default function Dashboard() {
                             disabled={item.quantity === 1}
                             onClick={() => changeCartQuantity(item.id, -1)}
                           >
-                            âˆ’
+                            −
                           </button>
                           <output>{String(item.quantity).padStart(2, "0")}</output>
                           <button
@@ -1468,18 +1468,18 @@ export default function Dashboard() {
 
               <section className="checkout-card" aria-label="Order total">
                 <div>
-                  <span>Subtotal Â· {cartCount} {cartCount === 1 ? "box" : "boxes"}</span>
+                  <span>Subtotal · {cartCount} {cartCount === 1 ? "box" : "boxes"}</span>
                   <strong>{formatNaira(subtotal)}</strong>
                 </div>
                 <div>
                   <span>Estimated kitchen time</span>
                   <strong>
-                    {estimatedMinutes}â€“{estimatedMinutes + 5} min
+                    {estimatedMinutes}–{estimatedMinutes + 5} min
                   </strong>
                 </div>
                 <button type="button" onClick={openCheckout}>
                   <span>Continue to checkout</span>
-                  <span aria-hidden="true">â†’</span>
+                  <span aria-hidden="true">→</span>
                 </button>
               </section>
             </>
@@ -1489,7 +1489,7 @@ export default function Dashboard() {
         <section className="checkout-content" aria-labelledby="checkout-heading">
           <div className="checkout-progress" aria-label={`Checkout step ${checkoutStep} of 2`}>
             <div className="is-complete">
-              <span>{checkoutStep > 1 ? "âœ“" : "1"}</span>
+              <span>{checkoutStep > 1 ? "✓" : "1"}</span>
               <strong>Review</strong>
             </div>
             <i className={checkoutStep === 2 ? "is-complete" : ""} />
@@ -1504,7 +1504,7 @@ export default function Dashboard() {
               <div className="checkout-heading">
                 <p>Step 1 of 2</p>
                 <h2 id="checkout-heading">Review your order</h2>
-                <span>Confirm your boxes and unlock a cafÃ© discount.</span>
+                <span>Confirm your boxes and unlock a café discount.</span>
               </div>
 
               <div className="checkout-order-list">
@@ -1516,7 +1516,7 @@ export default function Dashboard() {
                       <div>
                         <strong>{checkoutMeal.name}</strong>
                         <span>
-                          {item.quantity} Ã— {formatNaira(checkoutMeal.price)}
+                          {item.quantity} × {formatNaira(checkoutMeal.price)}
                         </span>
                       </div>
                       <strong>{formatNaira(checkoutMeal.price * item.quantity)}</strong>
@@ -1527,7 +1527,7 @@ export default function Dashboard() {
 
               <section className="promo-card" aria-labelledby="promo-heading">
                 <div>
-                  <span className="promo-spark" aria-hidden="true">âœ¦</span>
+                  <span className="promo-spark" aria-hidden="true">✦</span>
                   <div>
                     <h3 id="promo-heading">Have a promo code?</h3>
                     <p>Enter it below to save on this order.</p>
@@ -1581,7 +1581,7 @@ export default function Dashboard() {
                       : `${spinsLeft} ${spinsLeft === 1 ? "spin" : "spins"} available`}
                   </small>
                 </span>
-                <b aria-hidden="true">â†’</b>
+                <b aria-hidden="true">→</b>
               </button>
               <p className="reward-rule">
                 Promo codes and wheel rewards cannot be combined. Your latest choice
@@ -1595,16 +1595,16 @@ export default function Dashboard() {
                 </div>
                 <div className={discount > 0 ? "discount-line" : ""}>
                   <span>Promo discount ({PROMO_DISCOUNT_PERCENT}%)</span>
-                  <strong>{discount > 0 ? `âˆ’${formatNaira(discount)}` : "â€”"}</strong>
+                  <strong>{discount > 0 ? `−${formatNaira(discount)}` : "—"}</strong>
                 </div>
                 <div className={wheelDiscount > 0 ? "discount-line" : ""}>
                   <span>Spin reward</span>
                   <strong>
                     {wheelDiscount > 0
-                      ? `âˆ’${formatNaira(wheelDiscount)}`
+                      ? `−${formatNaira(wheelDiscount)}`
                       : appliedWheelReward?.freeDelivery
                         ? "Free delivery"
-                        : "â€”"}
+                        : "—"}
                   </strong>
                 </div>
                 <div className={deliveryFee === 0 ? "discount-line" : ""}>
@@ -1620,7 +1620,7 @@ export default function Dashboard() {
               <div className="fixed-cta-container">
                 <button className="checkout-next" type="button" onClick={continueToDelivery}>
                   <span>Next: delivery details</span>
-                  <span aria-hidden="true">â†’</span>
+                  <span aria-hidden="true">→</span>
                 </button>
               </div>
             </>
@@ -1643,12 +1643,12 @@ export default function Dashboard() {
                 </div>
                 {addressPreview && savedDelivery ? (
                   <div className="checkout-address-preview">
-                    <span aria-hidden="true">âŒ‚</span>
+                    <span aria-hidden="true">⌂</span>
                     <div>
                       <strong>{savedDelivery.name}</strong>
                       <p>{savedDelivery.address}</p>
                       <small>
-                        {savedDelivery.city} Â· {savedDelivery.phone}
+                        {savedDelivery.city} · {savedDelivery.phone}
                       </small>
                     </div>
                     <i aria-hidden="true">Saved</i>
@@ -1737,10 +1737,10 @@ export default function Dashboard() {
                     type="button"
                     onClick={() => setPaymentMethod("wallet")}
                   >
-                    <span className="payment-icon wallet-icon" aria-hidden="true">â‚¦</span>
+                    <span className="payment-icon wallet-icon" aria-hidden="true">₦</span>
                     <span>
                       <strong>Indomie Wallet</strong>
-                      <small>Balance Â· â‚¦50,000</small>
+                      <small>Balance · ₦50,000</small>
                     </span>
                     <i aria-hidden="true" />
                   </button>
@@ -1749,7 +1749,7 @@ export default function Dashboard() {
                     type="button"
                     onClick={() => setPaymentMethod("transfer")}
                   >
-                    <span className="payment-icon" aria-hidden="true">â†—</span>
+                    <span className="payment-icon" aria-hidden="true">↗</span>
                     <span>
                       <strong>Bank transfer</strong>
                       <small>Pay from any Nigerian bank</small>
@@ -1773,8 +1773,8 @@ export default function Dashboard() {
 
               <div className="fixed-cta-container">
                 <button className="checkout-next place-order" type="button" onClick={placeOrder}>
-                  <span>Place order Â· {formatNaira(orderTotal)}</span>
-                  <span aria-hidden="true">â†’</span>
+                  <span>Place order · {formatNaira(orderTotal)}</span>
+                  <span aria-hidden="true">→</span>
                 </button>
               </div>
             </>
@@ -1815,7 +1815,7 @@ export default function Dashboard() {
                     <span>
                       <strong>{orderedMeal.name}</strong>
                       <small>
-                        {item.quantity} Ã— {formatNaira(orderedMeal.price)} Â·{" "}
+                        {item.quantity} × {formatNaira(orderedMeal.price)} ·{" "}
                         {spiceLevels[item.spiceIndex].name}
                       </small>
                     </span>
@@ -1839,7 +1839,7 @@ export default function Dashboard() {
                 }
                 aria-current={index === trackingStage ? "step" : undefined}
               >
-                <span>{index < trackingStage ? "âœ“" : index + 1}</span>
+                <span>{index < trackingStage ? "✓" : index + 1}</span>
                 <div>
                   <strong>{stage.name}</strong>
                   <small>{stage.note}</small>
@@ -1861,7 +1861,7 @@ export default function Dashboard() {
             <div className="fixed-cta-container">
               <button className="tracking-dashboard" type="button" onClick={goToDashboard}>
                 <span>Go back to dashboard</span>
-                <span aria-hidden="true">â†’</span>
+                <span aria-hidden="true">→</span>
               </button>
             </div>
           )}
@@ -1911,11 +1911,11 @@ export default function Dashboard() {
               disabled={wheelSpinning}
               onClick={() => setWheelOpen(false)}
             >
-              Ã—
+              ×
             </button>
 
             <div className="wheel-modal-heading">
-              <p>Indomie CafÃ© rewards</p>
+              <p>Indomie Café rewards</p>
               <h2 id="wheel-heading">Spin to Win</h2>
               <span>
                 {spinsLeft} {spinsLeft === 1 ? "spin" : "spins"} remaining
@@ -1949,10 +1949,10 @@ export default function Dashboard() {
                   {wheelResult.discount
                     ? "%"
                     : wheelResult.freeDelivery
-                      ? "âœ“"
+                      ? "✓"
                       : wheelResult.extraSpin
-                        ? "â†»"
-                        : "â€¢"}
+                        ? "↻"
+                        : "•"}
                 </span>
                 <div>
                   <small>{wheelResult.id === "nothing" ? "So close!" : "You won"}</small>
