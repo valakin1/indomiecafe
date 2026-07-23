@@ -46,7 +46,7 @@ type CompletedOrder = ActiveOrder & {
 };
 
 const PROMO_CODE = "INDOMIECAFE";
-const PROMO_DISCOUNT_PERCENT = 20;
+const PROMO_DISCOUNT_PERCENT = 25;
 
 const meals: Meal[] = [
   {
@@ -178,7 +178,12 @@ function formatOrderDate(value: number) {
 }
 
 function calculatePercentageDiscount(amount: number, percentage: number) {
-  return Math.round((amount * percentage) / 100);
+  const safeAmount = Number.isFinite(amount) ? Math.max(0, amount) : 0;
+  const safePercentage = Number.isFinite(percentage)
+    ? Math.max(0, Math.min(100, percentage))
+    : 0;
+
+  return Math.round(safeAmount * (safePercentage / 100));
 }
 
 function getOrderStatus(order: ActiveOrder, now: number) {
@@ -516,7 +521,7 @@ export default function Dashboard() {
       showNotice(
         replacedWheelReward
           ? "Promo applied — it replaced your wheel reward."
-          : "Promo applied — you saved 20%.",
+          : `Promo applied — you saved ${PROMO_DISCOUNT_PERCENT}%.`,
       );
     } else {
       setPromoStatus("error");
