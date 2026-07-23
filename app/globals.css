@@ -25,7 +25,9 @@ body {
 }
 
 button,
-input {
+input,
+textarea,
+select {
   color: inherit;
   font: inherit;
 }
@@ -566,7 +568,7 @@ button {
 .detail-hero {
   position: relative;
   display: grid;
-  height: clamp(205px, 31vh, 270px);
+  height: clamp(168px, 31svh, 270px);
   place-items: center;
 }
 
@@ -578,8 +580,9 @@ button {
 
 .detail-product {
   position: relative;
-  width: min(50vw, 230px);
+  width: auto;
   height: 100%;
+  max-width: min(58vw, 230px);
   object-fit: contain;
   filter: drop-shadow(0 16px 14px rgba(70, 55, 38, 0.13));
 }
@@ -3266,8 +3269,13 @@ button {
     height: 62px;
   }
 
-  .detail-hero {
-    height: 205px;
+}
+
+@media (max-width: 520px) {
+  input,
+  textarea,
+  select {
+    font-size: 16px;
   }
 }
 
