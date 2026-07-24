@@ -265,9 +265,12 @@ button {
   height: 30px;
   place-items: center;
   border-radius: 10px;
-  color: #fff;
-  background: var(--brand-red);
-  font-size: 16px;
+  background: #e8e6e1;
+}
+
+.location-pill > span:first-child img {
+  width: 18px;
+  height: 18px;
 }
 
 .location-pill > span:nth-child(2) {
@@ -2150,9 +2153,13 @@ button {
   flex: 0 0 38px;
   place-items: center;
   border-radius: 50%;
-  color: #fff;
-  background: var(--brand-red);
-  box-shadow: 0 7px 16px rgba(232, 62, 32, 0.2);
+  background: #e8e6e1;
+  box-shadow: 0 7px 16px rgba(26, 26, 26, 0.08);
+}
+
+.promo-spark img {
+  width: 21px;
+  height: 21px;
 }
 
 .promo-card h3,
@@ -2428,6 +2435,11 @@ button {
   font-size: 18px;
 }
 
+.fulfillment-tabs button > span img {
+  width: 20px;
+  height: 20px;
+}
+
 .fulfillment-tabs strong {
   color: var(--ink);
   font-size: 14px;
@@ -2447,7 +2459,7 @@ button {
 
 .fulfillment-tabs button.is-active > span {
   color: var(--ink);
-  background: var(--yellow);
+  background: #fff;
 }
 
 .fulfillment-tabs button.is-active strong {
@@ -2476,9 +2488,12 @@ button {
   height: 40px;
   place-items: center;
   border-radius: 12px;
-  color: #fff;
-  background: var(--brand-red);
-  font-size: 18px;
+  background: #e8e6e1;
+}
+
+.cafe-pickup-heading > span img {
+  width: 21px;
+  height: 21px;
 }
 
 .cafe-pickup-heading h3,
@@ -2543,7 +2558,7 @@ button {
   align-items: center;
   gap: 9px;
   border-radius: 13px;
-  background: rgba(253, 221, 57, 0.18);
+  background: #efeeeb;
 }
 
 .selected-cafe-preview > span {
@@ -2552,9 +2567,13 @@ button {
   height: 30px;
   place-items: center;
   border-radius: 50%;
-  color: #fff;
-  background: #4ca35d;
-  font-size: 12px;
+  background: var(--ink);
+}
+
+.selected-cafe-preview > span img {
+  width: 16px;
+  height: 16px;
+  filter: invert(1);
 }
 
 .selected-cafe-preview > div {
@@ -2580,9 +2599,14 @@ button {
   font-size: 12px;
 }
 
-.selected-cafe-preview b {
-  color: #397c4b;
+.selected-cafe-preview a {
+  padding: 7px 9px;
+  border-radius: 999px;
+  color: #fff;
+  background: var(--ink);
   font-size: 12px;
+  font-weight: 750;
+  text-decoration: none;
 }
 
 .delivery-card h3,
@@ -2601,8 +2625,8 @@ button {
   padding: 0 12px;
   border: 0;
   border-radius: 999px;
-  color: var(--brand-red);
-  background: rgba(232, 62, 32, 0.08);
+  color: #68635d;
+  background: #e8e6e1;
   font-size: 12px;
   font-weight: 800;
 }
@@ -2716,9 +2740,9 @@ button {
 }
 
 .payment-options > button.is-selected {
-  border-color: rgba(232, 62, 32, 0.48);
-  background: rgba(232, 62, 32, 0.055);
-  box-shadow: 0 0 0 3px rgba(232, 62, 32, 0.07);
+  border-color: rgba(26, 26, 26, 0.48);
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(26, 26, 26, 0.07);
 }
 
 .payment-icon {
@@ -2727,22 +2751,15 @@ button {
   height: 40px;
   place-items: center;
   border-radius: 11px;
-  color: #fff;
-  background: #2d2d2d;
+  border: 1px solid rgba(26, 26, 26, 0.08);
+  background: #fff;
   font-size: 18px;
   font-weight: 700;
 }
 
-.wallet-icon {
-  background: linear-gradient(145deg, var(--brand-red), #b92612);
-}
-
-.card-icon::before {
-  width: 21px;
-  height: 14px;
-  border: 1.5px solid #fff;
-  border-radius: 3px;
-  content: "";
+.payment-icon img {
+  width: 22px;
+  height: 22px;
 }
 
 .payment-options > button > span:nth-child(2) {
@@ -2771,7 +2788,7 @@ button {
 }
 
 .payment-options > button.is-selected > i {
-  border: 5px solid var(--brand-red);
+  border: 5px solid var(--ink);
 }
 
 .place-order {
