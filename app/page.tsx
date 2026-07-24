@@ -39,6 +39,8 @@ type ActiveOrder = {
   startedAt: number;
   durationSeconds: number;
   displayStartSeconds: number;
+  fulfillment?: "delivery" | "walk-in";
+  cafeId?: string;
 };
 
 type CompletedOrder = ActiveOrder & {
@@ -47,6 +49,30 @@ type CompletedOrder = ActiveOrder & {
 
 const PROMO_CODE = "INDOMIECAFE";
 const PROMO_DISCOUNT_PERCENT = 25;
+
+const cafeLocations = [
+  {
+    id: "lekki",
+    name: "Indomie Café Lekki",
+    address: "Lekki Phase 1, Lagos",
+    latitude: 6.4474,
+    longitude: 3.4723,
+  },
+  {
+    id: "ikeja",
+    name: "Indomie Café Ikeja",
+    address: "Ikeja GRA, Lagos",
+    latitude: 6.5843,
+    longitude: 3.3515,
+  },
+  {
+    id: "surulere",
+    name: "Indomie Café Surulere",
+    address: "Surulere, Lagos",
+    latitude: 6.4969,
+    longitude: 3.3515,
+  },
+] as const;
 
 const meals: Meal[] = [
   {
@@ -186,6 +212,27 @@ function calculatePercentageDiscount(amount: number, percentage: number) {
   return Math.round(safeAmount * (safePercentage / 100));
 }
 
+function distanceBetweenCoordinates(
+  latitudeA: number,
+  longitudeA: number,
+  latitudeB: number,
+  longitudeB: number,
+) {
+  const toRadians = (value: number) => (value * Math.PI) / 180;
+  const earthRadiusKm = 6371;
+  const latitudeDelta = toRadians(latitudeB - latitudeA);
+  const longitudeDelta = toRadians(longitudeB - longitudeA);
+  const startLatitude = toRadians(latitudeA);
+  const endLatitude = toRadians(latitudeB);
+  const haversine =
+    Math.sin(latitudeDelta / 2) ** 2 +
+    Math.cos(startLatitude) *
+      Math.cos(endLatitude) *
+      Math.sin(longitudeDelta / 2) ** 2;
+
+  return earthRadiusKm * 2 * Math.atan2(Math.sqrt(haversine), Math.sqrt(1 - haversine));
+}
+
 function getOrderStatus(order: ActiveOrder, now: number) {
   const elapsedSeconds = Math.max(0, (now - order.startedAt) / 1000);
   const progress = Math.min(1, elapsedSeconds / order.durationSeconds);
@@ -243,6 +290,14 @@ export default function Dashboard() {
   const [appliedWheelReward, setAppliedWheelReward] = useState<WheelReward | null>(null);
   const [activeOrders, setActiveOrders] = useState<ActiveOrder[]>([]);
   const [orderHistory, setOrderHistory] = useState<CompletedOrder[]>([]);
+  const [orderTab, setOrderTab] = useState<"ongoing" | "completed">("ongoing");
+  const [fulfillmentMethod, setFulfillmentMethod] = useState<"delivery" | "walk-in">(
+    "delivery",
+  );
+  const [selectedCafeId, setSelectedCafeId] = useState<string>(cafeLocations[0].id);
+  const [locationStatus, setLocationStatus] = useState<
+    "idle" | "detecting" | "found" | "manual"
+  >("idle");
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
   const [trackingOrigin, setTrackingOrigin] = useState<
     "confirmation" | "menu" | "orders" | "cart"
@@ -272,7 +327,11 @@ export default function Dashboard() {
       ? calculatePercentageDiscount(subtotal, appliedWheelReward.discount)
     : 0;
   const deliveryFee =
-    promoStatus !== "applied" && appliedWheelReward?.freeDelivery ? 0 : 400;
+    fulfillmentMethod === "walk-in"
+      ? 0
+      : promoStatus !== "applied" && appliedWheelReward?.freeDelivery
+        ? 0
+        : 400;
   const appliedDiscount = discount || wheelDiscount;
   const discountedSubtotal = Math.max(0, subtotal - appliedDiscount);
   const orderTotal = discountedSubtotal + deliveryFee;
@@ -291,6 +350,42 @@ export default function Dashboard() {
   const trackingMeal = meals[selectedOrder?.mealIndex ?? 0];
   const trackingStage = selectedOrderStatus?.stage ?? 0;
   const trackingDisplaySeconds = selectedOrderStatus?.displaySeconds ?? 0;
+  const selectedCafe =
+    cafeLocations.find((cafe) => cafe.id === selectedCafeId) ?? cafeLocations[0];
+
+  const detectNearestCafe = () => {
+    if (!navigator.geolocation) {
+      setLocationStatus("manual");
+      return;
+    }
+
+    setLocationStatus("detecting");
+    navigator.geolocation.getCurrentPosition(
+      ({ coords }) => {
+        const nearestCafe = cafeLocations.reduce((nearest, cafe) => {
+          const nearestDistance = distanceBetweenCoordinates(
+            coords.latitude,
+            coords.longitude,
+            nearest.latitude,
+            nearest.longitude,
+          );
+          const cafeDistance = distanceBetweenCoordinates(
+            coords.latitude,
+            coords.longitude,
+            cafe.latitude,
+            cafe.longitude,
+          );
+          return cafeDistance < nearestDistance ? cafe : nearest;
+        });
+
+        setSelectedCafeId(nearestCafe.id);
+        setLocationStatus("found");
+        window.localStorage.setItem("indomie-cafe-location", nearestCafe.id);
+      },
+      () => setLocationStatus("manual"),
+      { enableHighAccuracy: false, timeout: 8000, maximumAge: 10 * 60 * 1000 },
+    );
+  };
 
   useEffect(() => {
     if (activeOrders.length === 0) return;
@@ -333,6 +428,17 @@ export default function Dashboard() {
       JSON.stringify(orderHistory),
     );
   }, [orderHistory]);
+
+  useEffect(() => {
+    const storedCafeId = window.localStorage.getItem("indomie-cafe-location");
+    if (storedCafeId && cafeLocations.some((cafe) => cafe.id === storedCafeId)) {
+      setSelectedCafeId(storedCafeId);
+      setLocationStatus("found");
+      return;
+    }
+
+    detectNearestCafe();
+  }, []);
 
   useEffect(() => {
     const storedProfile = window.localStorage.getItem("indomie-cafe-profile");
@@ -644,7 +750,10 @@ export default function Dashboard() {
   };
 
   const placeOrder = () => {
-    if (!delivery.name.trim() || !delivery.phone.trim() || !delivery.address.trim()) {
+    if (
+      fulfillmentMethod === "delivery" &&
+      (!delivery.name.trim() || !delivery.phone.trim() || !delivery.address.trim())
+    ) {
       setAddressError("Please add your name, phone number, and delivery address.");
       return;
     }
@@ -660,6 +769,8 @@ export default function Dashboard() {
       startedAt: Date.now(),
       durationSeconds,
       displayStartSeconds: meals[orderedMealIndex].minutes * 60 + 36,
+      fulfillment: fulfillmentMethod,
+      cafeId: fulfillmentMethod === "walk-in" ? selectedCafe.id : undefined,
     };
     setActiveOrders((orders) => [...orders, nextOrder]);
     setSelectedOrderId(orderId);
@@ -750,6 +861,16 @@ export default function Dashboard() {
                 Juwon <span aria-hidden="true">{"\u{1F44B}"}</span>
               </h1>
               <p className="prompt">What would you like to have today?</p>
+              <button className="location-pill" type="button" onClick={detectNearestCafe}>
+                <span aria-hidden="true">⌖</span>
+                <span>
+                  <strong>
+                    {locationStatus === "detecting" ? "Finding your nearest café…" : selectedCafe.name}
+                  </strong>
+                  <small>{selectedCafe.address}</small>
+                </span>
+                <b aria-hidden="true">›</b>
+              </button>
             </div>
 
             <div
@@ -898,9 +1019,30 @@ export default function Dashboard() {
               <span>Track every box from the kitchen to your door.</span>
             </div>
 
-            {activeOrders.length > 0 || orderHistory.length > 0 ? (
+            <div className="orders-tabs" role="tablist" aria-label="Order status">
+              <button
+                className={orderTab === "ongoing" ? "is-active" : ""}
+                type="button"
+                role="tab"
+                aria-selected={orderTab === "ongoing"}
+                onClick={() => setOrderTab("ongoing")}
+              >
+                Ongoing <span>{activeOrders.length}</span>
+              </button>
+              <button
+                className={orderTab === "completed" ? "is-active" : ""}
+                type="button"
+                role="tab"
+                aria-selected={orderTab === "completed"}
+                onClick={() => setOrderTab("completed")}
+              >
+                Completed <span>{orderHistory.length}</span>
+              </button>
+            </div>
+
+            {(orderTab === "ongoing" ? activeOrders.length : orderHistory.length) > 0 ? (
               <div className="orders-groups">
-                {activeOrders.length > 0 && (
+                {orderTab === "ongoing" && activeOrders.length > 0 && (
                   <section className="orders-group" aria-labelledby="active-orders-heading">
                     <div className="orders-group-heading">
                       <h3 id="active-orders-heading">In progress</h3>
@@ -952,7 +1094,7 @@ export default function Dashboard() {
                   </section>
                 )}
 
-                {orderHistory.length > 0 && (
+                {orderTab === "completed" && orderHistory.length > 0 && (
                   <section className="orders-group" aria-labelledby="order-history-heading">
                     <div className="orders-group-heading">
                       <h3 id="order-history-heading">Order history</h3>
@@ -1002,11 +1144,17 @@ export default function Dashboard() {
             ) : (
               <div className="orders-empty">
                 <img src="/bowl-food.svg" alt="" aria-hidden="true" />
-                <h3>No orders yet</h3>
-                <p>Your active and completed café orders will appear here.</p>
-                <button type="button" onClick={() => setScreen("menu")}>
-                  Explore the menu
-                </button>
+                <h3>{orderTab === "ongoing" ? "No ongoing orders" : "No completed orders"}</h3>
+                <p>
+                  {orderTab === "ongoing"
+                    ? "New café orders will appear here while they are being prepared."
+                    : "Orders you have received will be saved here for easy reference."}
+                </p>
+                {orderTab === "ongoing" && (
+                  <button type="button" onClick={() => setScreen("menu")}>
+                    Explore the menu
+                  </button>
+                )}
               </div>
             )}
           </section>
@@ -1105,7 +1253,12 @@ export default function Dashboard() {
 
               {savedDelivery && addressPreview ? (
                 <div className="profile-address-preview">
-                  <span aria-hidden="true">⌂</span>
+                  <span aria-hidden="true">
+                    <svg viewBox="0 0 24 24" role="presentation">
+                      <path d="M3.5 10.5 12 3l8.5 7.5v9a1.5 1.5 0 0 1-1.5 1.5H5a1.5 1.5 0 0 1-1.5-1.5v-9Z" />
+                      <path d="M9 21v-7h6v7" />
+                    </svg>
+                  </span>
                   <div>
                     <strong>{savedDelivery.name}</strong>
                     <p>{savedDelivery.address}</p>
@@ -1281,19 +1434,19 @@ export default function Dashboard() {
             <div className="quantity-picker" aria-label="Quantity selector">
               <button
                 type="button"
-                aria-label="Increase quantity"
-                onClick={() => setQuantity((value) => Math.min(20, value + 1))}
-              >
-                +
-              </button>
-              <output aria-live="polite">{String(quantity).padStart(2, "0")}</output>
-              <button
-                type="button"
                 aria-label="Decrease quantity"
                 disabled={quantity === 1}
                 onClick={() => setQuantity((value) => Math.max(1, value - 1))}
               >
                 −
+              </button>
+              <output aria-live="polite">{String(quantity).padStart(2, "0")}</output>
+              <button
+                type="button"
+                aria-label="Increase quantity"
+                onClick={() => setQuantity((value) => Math.min(20, value + 1))}
+              >
+                +
               </button>
             </div>
             <button
@@ -1557,14 +1710,14 @@ export default function Dashboard() {
                   <button type="submit">Apply</button>
                 </form>
                 {promoStatus === "applied" && (
-                  <p className="promo-feedback success">
+                  <p className="promo-feedback success" role="status" aria-live="polite">
                     {PROMO_DISCOUNT_PERCENT}% applied: you saved {formatNaira(discount)}.
                     Food total is now {formatNaira(discountedSubtotal)}.
                   </p>
                 )}
                 {promoStatus === "error" && (
-                  <p className="promo-feedback error">
-                    That code is not valid. Try INDOMIECAFE.
+                  <p className="promo-feedback error" role="alert">
+                    That code is not valid. Contact the developer, Akinpire Valentine.
                   </p>
                 )}
               </section>
@@ -1613,7 +1766,7 @@ export default function Dashboard() {
                   </strong>
                 </div>
                 <div className={deliveryFee === 0 ? "discount-line" : ""}>
-                  <span>Delivery</span>
+                  <span>{fulfillmentMethod === "walk-in" ? "Café pickup" : "Delivery"}</span>
                   <strong>{deliveryFee === 0 ? "FREE" : formatNaira(deliveryFee)}</strong>
                 </div>
                 <div>
@@ -1633,11 +1786,49 @@ export default function Dashboard() {
             <>
               <div className="checkout-heading">
                 <p>Step 2 of 2</p>
-                <h2 id="checkout-heading">Where should we deliver?</h2>
-                <span>Add your address, then choose how you would like to pay.</span>
+                <h2 id="checkout-heading">
+                  {fulfillmentMethod === "delivery" ? "Where should we deliver?" : "Choose your café"}
+                </h2>
+                <span>
+                  {fulfillmentMethod === "delivery"
+                    ? "Add your address, then choose how you would like to pay."
+                    : "Order ahead and collect your box when it is ready."}
+                </span>
               </div>
 
-              <section className="delivery-card" aria-labelledby="delivery-heading">
+              <div className="fulfillment-tabs" role="tablist" aria-label="Order fulfilment">
+                <button
+                  className={fulfillmentMethod === "delivery" ? "is-active" : ""}
+                  type="button"
+                  role="tab"
+                  aria-selected={fulfillmentMethod === "delivery"}
+                  onClick={() => {
+                    setFulfillmentMethod("delivery");
+                    setAddressError("");
+                  }}
+                >
+                  <span aria-hidden="true">⌂</span>
+                  <strong>Delivery</strong>
+                  <small>Bring it to me</small>
+                </button>
+                <button
+                  className={fulfillmentMethod === "walk-in" ? "is-active" : ""}
+                  type="button"
+                  role="tab"
+                  aria-selected={fulfillmentMethod === "walk-in"}
+                  onClick={() => {
+                    setFulfillmentMethod("walk-in");
+                    setAddressError("");
+                  }}
+                >
+                  <span aria-hidden="true">◎</span>
+                  <strong>Walk-in</strong>
+                  <small>Collect at a café</small>
+                </button>
+              </div>
+
+              {fulfillmentMethod === "delivery" ? (
+                <section className="delivery-card" aria-labelledby="delivery-heading">
                 <div className="checkout-delivery-heading">
                   <h3 id="delivery-heading">Delivery details</h3>
                   {addressPreview && savedDelivery && (
@@ -1648,7 +1839,12 @@ export default function Dashboard() {
                 </div>
                 {addressPreview && savedDelivery ? (
                   <div className="checkout-address-preview">
-                    <span aria-hidden="true">⌂</span>
+                    <span aria-hidden="true">
+                      <svg viewBox="0 0 24 24" role="presentation">
+                        <path d="M3.5 10.5 12 3l8.5 7.5v9a1.5 1.5 0 0 1-1.5 1.5H5a1.5 1.5 0 0 1-1.5-1.5v-9Z" />
+                        <path d="M9 21v-7h6v7" />
+                      </svg>
+                    </span>
                     <div>
                       <strong>{savedDelivery.name}</strong>
                       <p>{savedDelivery.address}</p>
@@ -1729,7 +1925,52 @@ export default function Dashboard() {
                     </button>
                   </>
                 )}
-              </section>
+                </section>
+              ) : (
+                <section className="cafe-pickup-card" aria-labelledby="cafe-pickup-heading">
+                  <div className="cafe-pickup-heading">
+                    <span aria-hidden="true">⌖</span>
+                    <div>
+                      <h3 id="cafe-pickup-heading">Pickup café</h3>
+                      <p>
+                        {locationStatus === "found"
+                          ? "We selected the closest café from your location."
+                          : "Choose a café or let us find the nearest one."}
+                      </p>
+                    </div>
+                  </div>
+                  <label>
+                    <span>Café location</span>
+                    <select
+                      value={selectedCafeId}
+                      onChange={(event) => {
+                        setSelectedCafeId(event.target.value);
+                        setLocationStatus("manual");
+                        window.localStorage.setItem("indomie-cafe-location", event.target.value);
+                      }}
+                    >
+                      {cafeLocations.map((cafe) => (
+                        <option value={cafe.id} key={cafe.id}>
+                          {cafe.name} — {cafe.address}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <button className="detect-cafe-button" type="button" onClick={detectNearestCafe}>
+                    {locationStatus === "detecting"
+                      ? "Finding the nearest café…"
+                      : "Use my location"}
+                  </button>
+                  <div className="selected-cafe-preview">
+                    <span aria-hidden="true">✓</span>
+                    <div>
+                      <strong>{selectedCafe.name}</strong>
+                      <small>{selectedCafe.address}</small>
+                    </div>
+                    <b>Selected</b>
+                  </div>
+                </section>
+              )}
 
               <section className="payment-card" aria-labelledby="payment-heading">
                 <div className="payment-heading">
@@ -1778,7 +2019,10 @@ export default function Dashboard() {
 
               <div className="fixed-cta-container">
                 <button className="checkout-next place-order" type="button" onClick={placeOrder}>
-                  <span>Place order · {formatNaira(orderTotal)}</span>
+                  <span>
+                    {fulfillmentMethod === "walk-in" ? "Place walk-in order" : "Place order"} ·{" "}
+                    {formatNaira(orderTotal)}
+                  </span>
                   <span aria-hidden="true">→</span>
                 </button>
               </div>
