@@ -295,6 +295,10 @@ export default function Dashboard() {
     "delivery",
   );
   const [selectedCafeId, setSelectedCafeId] = useState<string>(cafeLocations[0].id);
+  const [userCoordinates, setUserCoordinates] = useState<{
+    latitude: number;
+    longitude: number;
+  } | null>(null);
   const [locationStatus, setLocationStatus] = useState<
     "idle" | "detecting" | "found" | "manual"
   >("idle");
@@ -352,6 +356,21 @@ export default function Dashboard() {
   const trackingDisplaySeconds = selectedOrderStatus?.displaySeconds ?? 0;
   const selectedCafe =
     cafeLocations.find((cafe) => cafe.id === selectedCafeId) ?? cafeLocations[0];
+  const selectedCafeDistanceKm = userCoordinates
+    ? distanceBetweenCoordinates(
+        userCoordinates.latitude,
+        userCoordinates.longitude,
+        selectedCafe.latitude,
+        selectedCafe.longitude,
+      )
+    : null;
+  const googleMapsDirectionsUrl = `https://www.google.com/maps/dir/?api=1&${
+    userCoordinates
+      ? `origin=${encodeURIComponent(`${userCoordinates.latitude},${userCoordinates.longitude}`)}&`
+      : ""
+  }destination=${encodeURIComponent(
+    `${selectedCafe.latitude},${selectedCafe.longitude}`,
+  )}&travelmode=driving`;
 
   const detectNearestCafe = () => {
     if (!navigator.geolocation) {
@@ -362,6 +381,10 @@ export default function Dashboard() {
     setLocationStatus("detecting");
     navigator.geolocation.getCurrentPosition(
       ({ coords }) => {
+        setUserCoordinates({
+          latitude: coords.latitude,
+          longitude: coords.longitude,
+        });
         const nearestCafe = cafeLocations.reduce((nearest, cafe) => {
           const nearestDistance = distanceBetweenCoordinates(
             coords.latitude,
@@ -433,8 +456,7 @@ export default function Dashboard() {
     const storedCafeId = window.localStorage.getItem("indomie-cafe-location");
     if (storedCafeId && cafeLocations.some((cafe) => cafe.id === storedCafeId)) {
       setSelectedCafeId(storedCafeId);
-      setLocationStatus("found");
-      return;
+      setLocationStatus("manual");
     }
 
     detectNearestCafe();
@@ -862,7 +884,9 @@ export default function Dashboard() {
               </h1>
               <p className="prompt">What would you like to have today?</p>
               <button className="location-pill" type="button" onClick={detectNearestCafe}>
-                <span aria-hidden="true">⌖</span>
+                <span aria-hidden="true">
+                  <img src="/location.svg" alt="" />
+                </span>
                 <span>
                   <strong>
                     {locationStatus === "detecting" ? "Finding your nearest café…" : selectedCafe.name}
@@ -1685,7 +1709,9 @@ export default function Dashboard() {
 
               <section className="promo-card" aria-labelledby="promo-heading">
                 <div>
-                  <span className="promo-spark" aria-hidden="true">✦</span>
+                  <span className="promo-spark" aria-hidden="true">
+                    <img src="/promo-code.svg" alt="" />
+                  </span>
                   <div>
                     <h3 id="promo-heading">Have a promo code?</h3>
                     <p>Enter it below to save on this order.</p>
@@ -1807,7 +1833,9 @@ export default function Dashboard() {
                     setAddressError("");
                   }}
                 >
-                  <span aria-hidden="true">⌂</span>
+                  <span aria-hidden="true">
+                    <img src="/delivery.svg" alt="" />
+                  </span>
                   <strong>Delivery</strong>
                   <small>Bring it to me</small>
                 </button>
@@ -1821,7 +1849,9 @@ export default function Dashboard() {
                     setAddressError("");
                   }}
                 >
-                  <span aria-hidden="true">◎</span>
+                  <span aria-hidden="true">
+                    <img src="/walk-in-store.svg" alt="" />
+                  </span>
                   <strong>Walk-in</strong>
                   <small>Collect at a café</small>
                 </button>
@@ -1929,7 +1959,9 @@ export default function Dashboard() {
               ) : (
                 <section className="cafe-pickup-card" aria-labelledby="cafe-pickup-heading">
                   <div className="cafe-pickup-heading">
-                    <span aria-hidden="true">⌖</span>
+                    <span aria-hidden="true">
+                      <img src="/location.svg" alt="" />
+                    </span>
                     <div>
                       <h3 id="cafe-pickup-heading">Pickup café</h3>
                       <p>
@@ -1962,12 +1994,25 @@ export default function Dashboard() {
                       : "Use my location"}
                   </button>
                   <div className="selected-cafe-preview">
-                    <span aria-hidden="true">✓</span>
+                    <span aria-hidden="true">
+                      <img src="/location.svg" alt="" />
+                    </span>
                     <div>
                       <strong>{selectedCafe.name}</strong>
-                      <small>{selectedCafe.address}</small>
+                      <small>
+                        {selectedCafeDistanceKm !== null
+                          ? `${selectedCafeDistanceKm.toFixed(1)} km away · ${selectedCafe.address}`
+                          : selectedCafe.address}
+                      </small>
                     </div>
-                    <b>Selected</b>
+                    <a
+                      href={googleMapsDirectionsUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label={`Open directions to ${selectedCafe.name} in Google Maps`}
+                    >
+                      Maps ↗
+                    </a>
                   </div>
                 </section>
               )}
@@ -1983,7 +2028,9 @@ export default function Dashboard() {
                     type="button"
                     onClick={() => setPaymentMethod("wallet")}
                   >
-                    <span className="payment-icon wallet-icon" aria-hidden="true">₦</span>
+                    <span className="payment-icon" aria-hidden="true">
+                      <img src="/wallet.svg" alt="" />
+                    </span>
                     <span>
                       <strong>Indomie Wallet</strong>
                       <small>Balance · ₦50,000</small>
@@ -1995,7 +2042,9 @@ export default function Dashboard() {
                     type="button"
                     onClick={() => setPaymentMethod("transfer")}
                   >
-                    <span className="payment-icon" aria-hidden="true">↗</span>
+                    <span className="payment-icon" aria-hidden="true">
+                      <img src="/bank.svg" alt="" />
+                    </span>
                     <span>
                       <strong>Bank transfer</strong>
                       <small>Pay from any Nigerian bank</small>
@@ -2007,7 +2056,9 @@ export default function Dashboard() {
                     type="button"
                     onClick={() => setPaymentMethod("card")}
                   >
-                    <span className="payment-icon card-icon" aria-hidden="true" />
+                    <span className="payment-icon" aria-hidden="true">
+                      <img src="/debit-card.svg" alt="" />
+                    </span>
                     <span>
                       <strong>Debit card</strong>
                       <small>Visa, Mastercard, or Verve</small>
