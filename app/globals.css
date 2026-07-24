@@ -5,6 +5,7 @@
   --muted: #a5a5a5;
   --paper: #f1f1ef;
   --brand-red: #e83e20;
+  --yellow: #fddd39;
 }
 
 * {
@@ -170,7 +171,7 @@ button {
   border-radius: 99px;
   color: #fff;
   background: var(--brand-red);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 800;
 }
 
@@ -239,6 +240,65 @@ button {
   line-height: 1.4;
 }
 
+.location-pill {
+  display: grid;
+  width: min(100%, 330px);
+  min-height: 46px;
+  margin-top: 12px;
+  padding: 7px 10px;
+  grid-template-columns: 30px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 9px;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 15px;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 8px 20px rgba(55, 47, 38, 0.07);
+  text-align: left;
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+}
+
+.location-pill > span:first-child {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  border-radius: 10px;
+  color: #fff;
+  background: var(--brand-red);
+  font-size: 16px;
+}
+
+.location-pill > span:nth-child(2) {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.location-pill strong,
+.location-pill small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.location-pill strong {
+  font-size: 12px;
+}
+
+.location-pill small {
+  color: #77716a;
+  font-size: 12px;
+}
+
+.location-pill b {
+  color: #8c867f;
+  font-size: 20px;
+  font-weight: 400;
+}
+
 .carousel {
   position: relative;
   display: flex;
@@ -260,7 +320,7 @@ button {
   right: clamp(22px, 7vw, 34px);
   margin: 0;
   color: #aaa;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 1.6px;
   text-transform: uppercase;
@@ -321,7 +381,7 @@ button {
 .meal-eyebrow {
   margin: 20px 0 2px;
   color: var(--brand-red);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 800;
   letter-spacing: 1.4px;
   text-transform: uppercase;
@@ -489,7 +549,7 @@ button {
 .active-order-stack small {
   overflow: hidden;
   color: rgba(255, 255, 255, 0.56);
-  font-size: 8px;
+  font-size: 12px;
   text-overflow: ellipsis;
   text-transform: uppercase;
   white-space: nowrap;
@@ -531,7 +591,7 @@ button {
   border-radius: 99px;
   color: #fff;
   background: var(--brand-red);
-  font-size: 8px;
+  font-size: 12px;
 }
 
 .nav-item img {
@@ -729,7 +789,7 @@ button {
   border-radius: 99px;
   color: rgba(26, 26, 26, 0.5);
   background: rgba(0, 0, 0, 0.04);
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .spice-range-wrap {
@@ -778,7 +838,7 @@ button {
   margin-top: 7px;
   grid-template-columns: repeat(4, 1fr);
   color: rgba(26, 26, 26, 0.5);
-  font-size: 11px;
+  font-size: 12px;
   text-align: center;
 }
 
@@ -838,14 +898,14 @@ button {
 }
 
 .spice-levels strong {
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.2;
 }
 
 .spice-levels small {
   margin-top: 6px;
   color: rgba(26, 26, 26, 0.5);
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.2;
   white-space: nowrap;
 }
@@ -873,7 +933,7 @@ button {
 
 .orders-heading p {
   color: var(--brand-red);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 800;
   letter-spacing: 1.5px;
   text-transform: uppercase;
@@ -893,9 +953,57 @@ button {
   font-size: 12px;
 }
 
+.orders-tabs {
+  display: grid;
+  height: 52px;
+  margin-top: 22px;
+  padding: 4px;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  border-radius: 16px;
+  background: rgba(26, 26, 26, 0.065);
+}
+
+.orders-tabs button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 0;
+  border-radius: 12px;
+  color: #79736c;
+  background: transparent;
+  font-size: 14px;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.orders-tabs button span {
+  display: grid;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  place-items: center;
+  border-radius: 999px;
+  color: #77716a;
+  background: rgba(255, 255, 255, 0.68);
+  font-size: 12px;
+}
+
+.orders-tabs button.is-active {
+  color: #fff;
+  background: var(--ink);
+  box-shadow: 0 7px 16px rgba(26, 26, 26, 0.16);
+}
+
+.orders-tabs button.is-active span {
+  color: var(--ink);
+  background: #fff;
+}
+
 .orders-groups {
   display: grid;
-  margin-top: 24px;
+  margin-top: 16px;
   gap: 28px;
 }
 
@@ -920,7 +1028,7 @@ button {
   border-radius: 999px;
   color: #77716a;
   background: rgba(255, 255, 255, 0.68);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 750;
 }
 
@@ -940,7 +1048,7 @@ button {
   min-height: 104px;
   width: 100%;
   padding: 11px 12px 11px 9px;
-  grid-template-columns: 25px 68px minmax(0, 1fr) auto;
+  grid-template-columns: 32px 64px minmax(0, 1fr) minmax(70px, auto);
   align-items: center;
   gap: 9px;
   overflow: hidden;
@@ -953,20 +1061,23 @@ button {
 }
 
 .order-sequence {
-  align-self: stretch;
   display: grid;
+  width: 32px;
+  height: 48px;
+  flex: 0 0 32px;
   place-items: center;
   border-radius: 11px;
   color: rgba(255, 255, 255, 0.72);
   background: var(--ink);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 850;
-  writing-mode: vertical-rl;
+  line-height: 1;
+  white-space: nowrap;
 }
 
 .order-history-card > img {
-  width: 68px;
-  height: 78px;
+  width: 64px;
+  height: 74px;
   object-fit: contain;
 }
 
@@ -983,7 +1094,7 @@ button {
 
 .order-history-copy small {
   color: var(--brand-red);
-  font-size: 8px;
+  font-size: 12px;
   font-weight: 800;
 }
 
@@ -996,13 +1107,15 @@ button {
 
 .order-history-copy em {
   color: #77716a;
-  font-size: 9px;
+  font-size: 12px;
   font-style: normal;
 }
 
 .order-history-status {
   align-items: flex-end;
   gap: 4px;
+  min-width: 70px;
+  white-space: nowrap;
 }
 
 .order-history-status i {
@@ -1014,12 +1127,12 @@ button {
 }
 
 .order-history-status strong {
-  font-size: 9px;
+  font-size: 12px;
 }
 
 .order-history-status small {
   color: #77716a;
-  font-size: 8px;
+  font-size: 12px;
 }
 
 .order-history-card.is-complete {
@@ -1080,7 +1193,7 @@ button {
   border-radius: 999px;
   color: #fff;
   background: var(--ink);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 800;
 }
 
@@ -1100,7 +1213,7 @@ button {
 
 .profile-heading p {
   color: var(--brand-red);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 800;
   letter-spacing: 1.5px;
   text-transform: uppercase;
@@ -1184,7 +1297,7 @@ button {
 .profile-identity p {
   margin-top: 4px;
   color: #77716a;
-  font-size: 9px;
+  font-size: 12px;
 }
 
 .profile-name-input {
@@ -1205,9 +1318,9 @@ button {
   padding: 0 12px;
   border: 0;
   border-radius: 999px;
-  color: var(--brand-red);
-  background: rgba(232, 62, 32, 0.08);
-  font-size: 9px;
+  color: #68635d;
+  background: #e8e6e1;
+  font-size: 12px;
   font-weight: 800;
   cursor: pointer;
 }
@@ -1229,7 +1342,7 @@ button {
 
 .profile-section-heading p {
   color: var(--brand-red);
-  font-size: 8px;
+  font-size: 12px;
   font-weight: 800;
   letter-spacing: 1px;
   text-transform: uppercase;
@@ -1264,16 +1377,27 @@ button {
   font-size: 18px;
 }
 
+.profile-address-preview > span svg,
+.checkout-address-preview > span svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
 .profile-address-preview strong,
 .checkout-address-preview strong {
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .profile-address-preview p,
 .checkout-address-preview p {
   margin: 4px 0 0;
   color: #5f5a54;
-  font-size: 9px;
+  font-size: 12px;
   line-height: 1.4;
 }
 
@@ -1282,7 +1406,7 @@ button {
   display: block;
   margin-top: 4px;
   color: #8b857e;
-  font-size: 8px;
+  font-size: 12px;
 }
 
 .profile-address-preview > i {
@@ -1293,7 +1417,7 @@ button {
   border-radius: 50%;
   color: #fff;
   background: #4ca35d;
-  font-size: 10px;
+  font-size: 12px;
   font-style: normal;
 }
 
@@ -1317,7 +1441,7 @@ button {
 
 .profile-address-form label > span {
   color: #67625c;
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 700;
 }
 
@@ -1329,7 +1453,7 @@ button {
   border-radius: 10px;
   outline: none;
   background: #f1f0ec;
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .profile-address-form input {
@@ -1348,7 +1472,7 @@ button {
   border-radius: 999px;
   color: #fff;
   background: var(--ink);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 800;
 }
 
@@ -1378,12 +1502,12 @@ button {
 }
 
 .notification-list strong {
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .notification-list small {
   color: #817c75;
-  font-size: 8px;
+  font-size: 12px;
 }
 
 .notification-list i {
@@ -1424,7 +1548,7 @@ button {
 
 .cart-heading p {
   color: var(--brand-red);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 800;
   letter-spacing: 1.5px;
   text-transform: uppercase;
@@ -1492,7 +1616,7 @@ button {
 
 .cart-order-switcher small {
   color: rgba(255, 255, 255, 0.56);
-  font-size: 8px;
+  font-size: 12px;
   letter-spacing: 0.8px;
   text-transform: uppercase;
 }
@@ -1507,7 +1631,7 @@ button {
 .cart-order-switcher em {
   overflow: hidden;
   color: rgba(255, 255, 255, 0.68);
-  font-size: 9px;
+  font-size: 12px;
   font-style: normal;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -1516,7 +1640,7 @@ button {
 .cart-order-switcher b {
   flex: 0 0 auto;
   color: #fddd39;
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .cart-list {
@@ -1613,7 +1737,7 @@ button {
 .cart-item-copy p {
   overflow: hidden;
   color: var(--brand-red);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 800;
   letter-spacing: 1.2px;
   text-overflow: ellipsis;
@@ -1637,7 +1761,7 @@ button {
   align-items: center;
   gap: 6px;
   color: #77716a;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 550;
 }
 
@@ -1668,7 +1792,7 @@ button {
 
 .cart-item-footer > span {
   color: #8c8780;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 550;
 }
 
@@ -1680,7 +1804,7 @@ button {
 
 .cart-line-price small {
   color: #8c8780;
-  font-size: 9px;
+  font-size: 12px;
 }
 
 .cart-line-price strong {
@@ -1887,12 +2011,12 @@ button {
   border: 1px solid rgba(26, 26, 26, 0.12);
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.6);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 800;
 }
 
 .checkout-progress > div strong {
-  font-size: 10px;
+  font-size: 12px;
   letter-spacing: 0.3px;
 }
 
@@ -1930,7 +2054,7 @@ button {
 
 .checkout-heading p {
   color: var(--brand-red);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 800;
   letter-spacing: 1.4px;
   text-transform: uppercase;
@@ -1993,7 +2117,7 @@ button {
 
 .checkout-order-item > div span {
   color: #8a857e;
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .checkout-order-item > strong {
@@ -2047,7 +2171,7 @@ button {
 .promo-card > div p {
   margin-top: 3px;
   color: #827d76;
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .promo-card form {
@@ -2077,14 +2201,14 @@ button {
   border-radius: 999px;
   color: #fff;
   background: var(--ink);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 800;
   cursor: pointer;
 }
 
 .promo-card .promo-feedback {
   margin-top: 9px;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 650;
 }
 
@@ -2182,7 +2306,7 @@ button {
 
 .spin-card small {
   color: rgba(255, 255, 255, 0.76);
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .spin-card > b {
@@ -2193,7 +2317,7 @@ button {
 .reward-rule {
   margin: 8px 5px 0;
   color: #8a847d;
-  font-size: 9px;
+  font-size: 12px;
   line-height: 1.45;
   text-align: center;
 }
@@ -2211,7 +2335,7 @@ button {
 
 .checkout-totals span {
   color: #77716a;
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .checkout-totals strong {
@@ -2270,6 +2394,197 @@ button {
   font-weight: 300;
 }
 
+.fulfillment-tabs {
+  display: grid;
+  margin-top: 18px;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.fulfillment-tabs button {
+  display: grid;
+  min-height: 92px;
+  padding: 12px;
+  grid-template-columns: 34px minmax(0, 1fr);
+  align-content: center;
+  align-items: center;
+  column-gap: 9px;
+  border: 1px solid rgba(26, 26, 26, 0.08);
+  border-radius: 16px;
+  color: #706a63;
+  background: rgba(255, 255, 255, 0.65);
+  text-align: left;
+  cursor: pointer;
+}
+
+.fulfillment-tabs button > span {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  grid-row: 1 / span 2;
+  place-items: center;
+  border-radius: 11px;
+  background: rgba(26, 26, 26, 0.07);
+  font-size: 18px;
+}
+
+.fulfillment-tabs strong {
+  color: var(--ink);
+  font-size: 14px;
+}
+
+.fulfillment-tabs small {
+  margin-top: 2px;
+  font-size: 12px;
+}
+
+.fulfillment-tabs button.is-active {
+  border-color: var(--ink);
+  color: rgba(255, 255, 255, 0.72);
+  background: var(--ink);
+  box-shadow: 0 10px 22px rgba(26, 26, 26, 0.16);
+}
+
+.fulfillment-tabs button.is-active > span {
+  color: var(--ink);
+  background: var(--yellow);
+}
+
+.fulfillment-tabs button.is-active strong {
+  color: #fff;
+}
+
+.cafe-pickup-card {
+  margin-top: 16px;
+  padding: 17px;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 17px;
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: 0 12px 28px rgba(60, 54, 45, 0.08);
+}
+
+.cafe-pickup-heading {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  align-items: center;
+  gap: 11px;
+}
+
+.cafe-pickup-heading > span {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border-radius: 12px;
+  color: #fff;
+  background: var(--brand-red);
+  font-size: 18px;
+}
+
+.cafe-pickup-heading h3,
+.cafe-pickup-heading p {
+  margin: 0;
+}
+
+.cafe-pickup-heading h3 {
+  font-size: 16px;
+}
+
+.cafe-pickup-heading p {
+  margin-top: 3px;
+  color: #7c766f;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.cafe-pickup-card > label {
+  display: flex;
+  margin-top: 15px;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.cafe-pickup-card > label > span {
+  color: #68625c;
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.cafe-pickup-card select {
+  width: 100%;
+  height: 50px;
+  padding: 0 12px;
+  border: 1px solid rgba(26, 26, 26, 0.1);
+  border-radius: 13px;
+  outline: none;
+  color: var(--ink);
+  background: #f1f0ec;
+  font-size: 14px;
+}
+
+.detect-cafe-button {
+  width: 100%;
+  height: 46px;
+  margin-top: 10px;
+  border: 0;
+  border-radius: 999px;
+  color: #fff;
+  background: var(--ink);
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.selected-cafe-preview {
+  display: grid;
+  margin-top: 12px;
+  padding: 12px;
+  grid-template-columns: 30px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 9px;
+  border-radius: 13px;
+  background: rgba(253, 221, 57, 0.18);
+}
+
+.selected-cafe-preview > span {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  border-radius: 50%;
+  color: #fff;
+  background: #4ca35d;
+  font-size: 12px;
+}
+
+.selected-cafe-preview > div {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.selected-cafe-preview strong,
+.selected-cafe-preview small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.selected-cafe-preview strong {
+  font-size: 12px;
+}
+
+.selected-cafe-preview small {
+  color: #77716a;
+  font-size: 12px;
+}
+
+.selected-cafe-preview b {
+  color: #397c4b;
+  font-size: 12px;
+}
+
 .delivery-card h3,
 .payment-heading h3 {
   margin: 0;
@@ -2288,13 +2603,13 @@ button {
   border-radius: 999px;
   color: var(--brand-red);
   background: rgba(232, 62, 32, 0.08);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 800;
 }
 
 .checkout-address-preview > i {
   color: #4ca35d;
-  font-size: 8px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 800;
 }
@@ -2307,7 +2622,7 @@ button {
   border-radius: 999px;
   color: #fff;
   background: var(--ink);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 800;
   cursor: pointer;
 }
@@ -2332,7 +2647,7 @@ button {
 
 .form-grid label > span {
   color: #67625c;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
 }
 
@@ -2366,7 +2681,7 @@ button {
 
 .address-error {
   margin: 11px 0 0;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 650;
 }
 
@@ -2443,7 +2758,7 @@ button {
 
 .payment-options small {
   color: #817c75;
-  font-size: 9px;
+  font-size: 12px;
 }
 
 .payment-options > button > i {
@@ -2494,7 +2809,7 @@ button {
 
 .tracking-copy p {
   color: var(--brand-red);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 850;
   letter-spacing: 1.5px;
   text-transform: uppercase;
@@ -2672,7 +2987,7 @@ button {
   border-radius: 999px;
   color: #fff;
   background: rgba(26, 26, 26, 0.88);
-  font-size: 8px;
+  font-size: 12px;
   font-weight: 750;
   backdrop-filter: blur(10px);
 }
@@ -2695,7 +3010,7 @@ button {
 
 .tracking-order-meta span {
   color: #8a847d;
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .tracking-order-meta strong {
@@ -2735,18 +3050,18 @@ button {
 
 .tracking-items strong {
   overflow: hidden;
-  font-size: 11px;
+  font-size: 12px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .tracking-items small {
   color: #77716a;
-  font-size: 8px;
+  font-size: 12px;
 }
 
 .tracking-items b {
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .tracking-timeline {
@@ -2795,7 +3110,7 @@ button {
   border: 1px solid rgba(26, 26, 26, 0.1);
   border-radius: 50%;
   background: #f2f1ed;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 850;
 }
 
@@ -2829,7 +3144,7 @@ button {
 }
 
 .tracking-timeline small {
-  font-size: 9px;
+  font-size: 12px;
 }
 
 .tracking-estimate {
@@ -2846,7 +3161,7 @@ button {
 
 .tracking-estimate span {
   color: rgba(255, 255, 255, 0.65);
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .tracking-estimate strong {
@@ -3003,7 +3318,7 @@ button {
 
 .wheel-modal-heading p {
   color: var(--brand-red);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 800;
   letter-spacing: 1.4px;
   text-transform: uppercase;
@@ -3023,7 +3338,7 @@ button {
   border-radius: 999px;
   color: #77716a;
   background: rgba(26, 26, 26, 0.05);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 650;
 }
 
@@ -3107,7 +3422,7 @@ button {
   left: 50%;
   width: 62px;
   color: #1a1a1a;
-  font-size: 8px;
+  font-size: 12px;
   font-weight: 900;
   letter-spacing: -0.1px;
   line-height: 1.05;
@@ -3190,7 +3505,7 @@ button {
 
 .wheel-result > div small {
   color: #8b8177;
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
 }
@@ -3207,7 +3522,7 @@ button {
   border-radius: 999px;
   color: #fff;
   background: var(--ink);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 800;
   cursor: pointer;
 }
@@ -3216,7 +3531,7 @@ button {
   max-width: 280px;
   margin: 13px auto 0;
   color: #8a847d;
-  font-size: 9px;
+  font-size: 12px;
   line-height: 1.4;
   text-align: center;
 }
@@ -3288,7 +3603,7 @@ button {
   }
 
   .spice-levels small {
-    font-size: 9px;
+    font-size: 12px;
   }
 }
 
