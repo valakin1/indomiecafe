@@ -52,25 +52,116 @@ const PROMO_DISCOUNT_PERCENT = 25;
 
 const cafeLocations = [
   {
-    id: "lekki",
-    name: "Indomie Café Lekki",
-    address: "Lekki Phase 1, Lagos",
-    latitude: 6.4474,
-    longitude: 3.4723,
-  },
-  {
-    id: "ikeja",
-    name: "Indomie Café Ikeja",
-    address: "Ikeja GRA, Lagos",
-    latitude: 6.5843,
-    longitude: 3.3515,
-  },
-  {
     id: "surulere",
     name: "Indomie Café Surulere",
-    address: "Surulere, Lagos",
-    latitude: 6.4969,
-    longitude: 3.3515,
+    address: "Leisure Mall, 30B Adeniran Ogunsanya Street, Surulere, Lagos 101211",
+    latitude: 6.490089,
+    longitude: 3.357299,
+  },
+  {
+    id: "victoria-island",
+    name: "Indomie Café Victoria Island",
+    address: "1 Amodu Ojikutu Street, off Saka Tinubu Street, Victoria Island, Lagos 101241",
+    latitude: 6.425397,
+    longitude: 3.419252,
+  },
+  {
+    id: "circle-mall",
+    name: "Indomie Café Circle Mall",
+    address: "Food Court, Circle Mall, Osapa, Jakande Roundabout, Lekki-Epe Expressway, Lagos",
+    latitude: 6.43813,
+    longitude: 3.508519,
+  },
+  {
+    id: "ikeja-gra",
+    name: "Indomie Café Ikeja",
+    address: "Goodies Superstores, 23 Mobolaji Bank Anthony Way, Ikeja GRA, Lagos 100271",
+    latitude: 6.574016,
+    longitude: 3.36261,
+  },
+  {
+    id: "fola-osibo",
+    name: "Indomie Café Fola Osibo",
+    address: "Block 64, Plot 3, Fola Osibo Street, by Emma Abimbola Cole Street, Lekki Phase 1, Lagos",
+    latitude: 6.442643,
+    longitude: 3.467679,
+  },
+  {
+    id: "festival-mall",
+    name: "Indomie Café Festival Mall",
+    address: "Shop 2, Shoprite Festival Mall, Janet Fajemigbesin Street, Festac Town, Lagos 102314",
+    latitude: 6.4643,
+    longitude: 3.304,
+  },
+  {
+    id: "yaba",
+    name: "Indomie Café Yaba",
+    address: "Ozone e-Centre, 1-11 Commercial Avenue, Sabo Yaba, Lagos 101241",
+    latitude: 6.50632,
+    longitude: 3.37426,
+  },
+  {
+    id: "jara-mall",
+    name: "Indomie Café Jara Mall",
+    address: "Jara Mall, 22 Simbiat Abiola Way, Ikeja, Lagos 101233",
+    latitude: 6.591928,
+    longitude: 3.339004,
+  },
+  {
+    id: "mma2",
+    name: "Indomie Café MMA2",
+    address: "Inside Murtala Muhammed Airport Terminal 2, Domestic Airport, Ikeja, Lagos",
+    latitude: 6.584821,
+    longitude: 3.332917,
+  },
+  {
+    id: "mmia",
+    name: "Indomie Café MMIA",
+    address: "Inside Murtala Muhammed International Airport, 52 International Airport Road, Ikeja, Lagos 102214",
+    latitude: 6.57737,
+    longitude: 3.32116,
+  },
+  {
+    id: "jakande",
+    name: "Indomie Café Jakande",
+    address: "Shop 11, Triangle Mall, Jakande, Osapa, Lekki, Lagos 101245",
+    latitude: 6.4383,
+    longitude: 3.50895,
+  },
+  {
+    id: "ikorodu",
+    name: "Indomie Café Ikorodu",
+    address: "84 Ayangburen Road, Ikorodu, Lagos 101233",
+    latitude: 6.614866,
+    longitude: 3.501988,
+  },
+  {
+    id: "ketu",
+    name: "Indomie Café Ketu",
+    address: "17 Jimoh Balogun Street, by CMD Road, Ikosi Ketu, Lagos 105102",
+    latitude: 6.6057,
+    longitude: 3.3776,
+  },
+  {
+    id: "gbagada",
+    name: "Indomie Café Gbagada",
+    address: "1 Ayodele Okeowo Street, Gbagada, Lagos 105102",
+    latitude: 6.556695,
+    longitude: 3.386878,
+  },
+  {
+    id: "akoka",
+    name: "Indomie Café Akoka",
+    address: "103 St Finbarr's College Road, Akoka, Lagos 101233",
+    latitude: 6.52164,
+    longitude: 3.39303,
+  },
+  {
+    id: "ago-palace",
+    name: "Indomie Café Ago Palace",
+    address: "Green Mall Plaza, by Greenfield Estate, Ago Palace Way, Okota, Lagos 102214",
+    latitude: 6.494538,
+    longitude: 3.297734,
   },
 ] as const;
 
@@ -369,7 +460,7 @@ export default function Dashboard() {
       ? `origin=${encodeURIComponent(`${userCoordinates.latitude},${userCoordinates.longitude}`)}&`
       : ""
   }destination=${encodeURIComponent(
-    `${selectedCafe.latitude},${selectedCafe.longitude}`,
+    `${selectedCafe.name}, ${selectedCafe.address}`,
   )}&travelmode=driving`;
 
   const detectNearestCafe = () => {
