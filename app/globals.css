@@ -2424,6 +2424,10 @@ button {
   cursor: pointer;
 }
 
+.checkout-card button:focus-visible {
+  outline-color: rgba(26, 26, 26, 0.32);
+}
+
 .fulfillment-tabs button > span {
   display: grid;
   width: 34px;
